@@ -123,40 +123,41 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarSesion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesion1ActionPerformed
-//        Mensaje correoContrasena;
-//        String correo;
-//        String clave;
-//        byte[] claveBytes;
-//        byte[] claveCifrada;
-//        correo = txtUsuario.getText().toString();
-//        clave = pwdContrasena.getText().toString();
-//        //claveBytes = clave.getBytes();
-//
-//        claveCifrada = s.cifrarMensaje(clave);
-//        correoContrasena = new Mensaje(correo, claveCifrada);
-//
-//        try {
-//            ip = InetAddress.getLocalHost();
-//            server = new Socket(ip, 1234);
-//            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
-//            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
-//            String login = "Login";
-//
-//            dos.writeUTF(login);
-//
-//            oos.writeObject(correoContrasena);
+        Mensaje correoContrasena;
+        String correo;
+        String clave;
+        byte[] claveBytes;
+        byte[] claveCifrada;
+        correo = txtUsuario.getText().toString();
+        clave = pwdContrasena.getText().toString();
+        //claveBytes = clave.getBytes();
+
+        claveCifrada = s.cifrarMensaje(clave);
+        correoContrasena = new Mensaje(correo, claveCifrada);
+
+        try {
+            ip = InetAddress.getLocalHost();
+            server = new Socket(ip, 1234);
+            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+            String login = "Login";
             int codigoRespuesta = 1;
+
+            dos.writeUTF(login);
+
+            oos.writeObject(correoContrasena);
+
             if (codigoRespuesta == 1) {
                 PantallaPrincipal v = new PantallaPrincipal();
                 v.setVisible(true);
                 this.setVisible(false);
             }
-//
-//        } catch (UnknownHostException ex) {
-//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         //byte[] mensajeResumido=s.resumirMensaje(claveBytes);
         //correoContrasena = new Mensaje(correo,claveCifrada);
