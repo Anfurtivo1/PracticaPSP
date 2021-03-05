@@ -34,6 +34,7 @@ public class Servidor {
         server = new ServerSocket(1234);
         System.out.println("Esperando");
         cliente = server.accept();
+        System.out.println("Ha llegado un usuario");
         
         HiloServidor hilo = new HiloServidor(cliente);
         hilo.start();

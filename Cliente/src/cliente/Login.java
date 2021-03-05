@@ -29,9 +29,11 @@ import javax.crypto.SecretKey;
  * @author anfur
  */
 public class Login extends javax.swing.JFrame {
+
     Seguridad s = new Seguridad();
     Socket server;
     InetAddress ip;
+
     /**
      * Creates new form Login
      */
@@ -52,6 +54,8 @@ public class Login extends javax.swing.JFrame {
         btnRegistrarse = new javax.swing.JButton();
         txtUsuario = new javax.swing.JTextField();
         pwdContrasena = new javax.swing.JPasswordField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -69,7 +73,9 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        pwdContrasena.setText("jPasswordField1");
+        jLabel1.setText("Usuario");
+
+        jLabel2.setText("Contraseña");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -82,21 +88,30 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(btnIniciarSesion1)
                         .addGap(43, 43, 43)
                         .addComponent(btnRegistrarse))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(149, 149, 149)
-                        .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(141, 141, 141)
-                        .addComponent(pwdContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(pwdContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(90, 90, 90)
+                            .addComponent(jLabel1)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(86, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(78, 78, 78)
-                .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addComponent(pwdContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pwdContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnIniciarSesion1)
@@ -108,37 +123,44 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarSesion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesion1ActionPerformed
-        Mensaje correoContrasena;
-        String correo;
-        String clave;
-        byte[]claveBytes;
-        byte[] claveCifrada;
-        correo = txtUsuario.getText().toString();
-        clave = pwdContrasena.getText().toString();
-        //claveBytes = clave.getBytes();
-        
-       claveCifrada=s.cifrarMensaje(clave);
-       correoContrasena = new Mensaje(correo,claveCifrada);
-        
-        try {
-            ip=InetAddress.getLocalHost();
-            server = new Socket (ip,1234);
-            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
-            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
-            
-            oos.writeObject(correoContrasena);
-            
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+//        Mensaje correoContrasena;
+//        String correo;
+//        String clave;
+//        byte[] claveBytes;
+//        byte[] claveCifrada;
+//        correo = txtUsuario.getText().toString();
+//        clave = pwdContrasena.getText().toString();
+//        //claveBytes = clave.getBytes();
+//
+//        claveCifrada = s.cifrarMensaje(clave);
+//        correoContrasena = new Mensaje(correo, claveCifrada);
+//
+//        try {
+//            ip = InetAddress.getLocalHost();
+//            server = new Socket(ip, 1234);
+//            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+//            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+//            String login = "Login";
+//
+//            dos.writeUTF(login);
+//
+//            oos.writeObject(correoContrasena);
+            int codigoRespuesta = 1;
+            if (codigoRespuesta == 1) {
+                PantallaPrincipal v = new PantallaPrincipal();
+                v.setVisible(true);
+                this.setVisible(false);
+            }
+//
+//        } catch (UnknownHostException ex) {
+//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
         //byte[] mensajeResumido=s.resumirMensaje(claveBytes);
-        
         //correoContrasena = new Mensaje(correo,claveCifrada);
-        
+
     }//GEN-LAST:event_btnIniciarSesion1ActionPerformed
 
     private void btnRegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarseActionPerformed
@@ -185,6 +207,8 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIniciarSesion1;
     private javax.swing.JButton btnRegistrarse;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPasswordField pwdContrasena;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables

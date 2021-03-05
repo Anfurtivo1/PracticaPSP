@@ -5,12 +5,20 @@
  */
 package cliente;
 
+import Utilidades.Seguridad;
+import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+
 /**
  *
  * @author anfur
  */
 public class Registro2 extends javax.swing.JFrame {
-
+    Seguridad s = new Seguridad();
+    Socket server;
+    InetAddress ip;
     /**
      * Creates new form Registro2
      */
@@ -127,7 +135,16 @@ public class Registro2 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAceptarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarRegistroActionPerformed
-        
+        try {
+            ip=InetAddress.getLocalHost();
+            server = new Socket (ip,1234);
+            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+            String registro="Registro";
+            dos.writeUTF(registro);
+            
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_btnAceptarRegistroActionPerformed
 
     private void btnVolverRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverRegistroActionPerformed
