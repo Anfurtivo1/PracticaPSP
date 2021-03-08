@@ -20,6 +20,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -224,37 +226,41 @@ public class Registro2 extends javax.swing.JFrame {
         try {
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            SecretKey claveSimetrica = kg.generateKey();
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String registro = "Registro";
             Mensaje registrarse = new Mensaje();
             String usuario = txtUsuarioRegistro.getText().toString();
-            String clave = pwdContrasenaRegistro.getPassword().toString();
+            String clave = pwdContrasenaRegistro.getText().toString();
             String nick = txtNickRegistro.getText().toString();
             String nombre = txtNombreRegistro.getText().toString();
             String apellido = txtApellidoRegistro.getText().toString();
             byte[] foto;
-            byte[] claveByte = clave.getBytes();
 
             byte[] usuarioCifrado;
-            byte[] claveResumida = s.resumirMensaje(claveByte);
+            byte[] claveResumida = s.resumirMensaje(clave);
             byte[] nickCifrado;
             byte[] nombreCifrado;
             byte[] apellidosCifrado;
             byte[] fotoCifrada;
 
-            nickCifrado = s.cifrarMensaje(usuario, registrarse);
-            usuarioCifrado = s.cifrarMensaje(usuario, registrarse);
-            nombreCifrado = s.cifrarMensaje(usuario, registrarse);
-            apellidosCifrado = s.cifrarMensaje(usuario, registrarse);
-            fotoCifrada = s.cifrarMensaje(usuario, registrarse);
+            nickCifrado = s.cifrarMensaje(nick, claveSimetrica);
+            usuarioCifrado = s.cifrarMensaje(usuario, claveSimetrica);
+            nombreCifrado = s.cifrarMensaje(nombre, claveSimetrica);
+            apellidosCifrado = s.cifrarMensaje(apellido, claveSimetrica);
+            //fotoCifrada = s.cifrarMensaje(foto, claveSimetrica);
 
             registrarse.setCorreo(usuarioCifrado);
             registrarse.setClaveResumida(claveResumida);
             registrarse.setNickCifrado(nickCifrado);
             registrarse.setNombreCifrado(nombreCifrado);
             registrarse.setApellidoCifrado(apellidosCifrado);
-            registrarse.setFotoCifrada(fotoCifrada);
+            //registrarse.setFotoCifrada(fotoCifrada);
+            
+            registrarse.setClaveSimetrica(claveSimetrica);
 
             ps.println("");
             ps.println(registro);

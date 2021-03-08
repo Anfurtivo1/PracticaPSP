@@ -9,6 +9,8 @@ package basedatos;
 import static basedatos.Constantes.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,6 +24,8 @@ public class UsuariosDB {
     //Atributo a través del cual hacemos la conexión física.
     private java.sql.Statement Sentencia_SQL;
     //Atributo que nos permite ejecutar una sentencia SQL
+    //
+    private java.sql.PreparedStatement SentenciaPreparada;
     private java.sql.ResultSet Conj_Registros;
     //(Cursor) En él están almacenados los datos.
     
@@ -35,7 +39,7 @@ public class UsuariosDB {
 
             //Realizamos la conexión a una BD con un usuario y una clave.
             Conex = java.sql.DriverManager.getConnection(URL_BD, Constantes.usuario, Constantes.passwd);
-            Sentencia_SQL = Conex.createStatement();
+            //Sentencia_SQL = Conex.createStatement();
             System.out.println("Conexion realizada con éxito");
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
@@ -52,33 +56,54 @@ public class UsuariosDB {
     }
     
     
-    public Usuario buscarPorCorreoClave(String correo, byte[] pass) {
-        ArrayList lp = new ArrayList();
+    public synchronized Usuario buscarPorCorreoClave(String correo, byte[] pass) {
         Usuario usuario = null;
         try {
-            String Sentencia = "SELECT Correo FROM " + TablaUsuarios + " where Correo = '"+ correo +"' and Clave ='"+pass+"'";
+            Sentencia_SQL = Conex.createStatement();
+            //String Sentencia = "SELECT Correo FROM " + TablaUsuarios + " where Correo = '"+ correo +"' and Clave ='"+pass+"'";
+            String Sentencia = "SELECT Correo,Clave,Nick,Nombre,Apellidos FROM " + TablaUsuarios + " where Correo = '"+ correo +"'";
             Conj_Registros = Sentencia_SQL.executeQuery(Sentencia);
-            if (!Conj_Registros.wasNull()) {
-                usuario = new Usuario(Conj_Registros.getString("Correo"),Conj_Registros.getString("Clave"),Conj_Registros.getString("Nick"),
-                                      Conj_Registros.getString("Nombre"),Conj_Registros.getString("Apellidos"));
+            if (Conj_Registros.next()) {
+                //System.out.println("Encontrado el usuario buscado");
+                usuario = new Usuario(Conj_Registros.getString("Correo"),Conj_Registros.getBytes("Clave"),Conj_Registros.getString("Nick"),Conj_Registros.getString("Nombre"),Conj_Registros.getString("Apellidos"));
                 return usuario;
             }
             
         } catch (SQLException ex) {
+            System.out.println("No se ha encontrado el usuario buscado: "+ex);
         }
         return usuario;
     }
     
     //------------------------------------------------------
-    public int insertarDato(byte[] correo, byte[] pass,byte[] nick,byte[] nombre,byte[] apellidos,byte[] foto,int rol) {
+    public synchronized int insertarDato(String correo,byte[] pass,String nick,String nombre,String apellidos,byte[] foto,int rol) {
         
-        String Sentencia = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES (null,'" + correo + "'," + "'" + pass + "',"+ "'" + nick + "'," + "'" + nombre + "'," + "'" + apellidos + "'," + "'" + foto + "'," + "'" + 0 + "'," + "'" + rol + "')";
+        //String Sentencia = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES (null,'" + correo + "'," + pass + ","+ "'" + nick + "'," + "'" + nombre + "'," + "'" + apellidos + "'," + "'" + foto + "'," + "'" + 0 + "'," + "'" + rol + "','"+0+"')";
+          String sentencia = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES (?,?,?,?,?,?,?,?,?,?)";
+          
         int cod = 0;
         try {
-            Sentencia_SQL.executeUpdate(Sentencia);
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setString(1, null);
+            SentenciaPreparada.setString(2, correo);
+            SentenciaPreparada.setBytes(3, pass);
+            SentenciaPreparada.setString(4, nick);
+            SentenciaPreparada.setString(5, nombre);
+            SentenciaPreparada.setString(6, apellidos);
+            SentenciaPreparada.setBytes(7, foto);
+            SentenciaPreparada.setBoolean(8, false);
+            SentenciaPreparada.setInt(9, 0);
+            SentenciaPreparada.setInt(10, 0);
+            SentenciaPreparada.executeUpdate();
         } catch (SQLException ex) {
             cod = ex.getErrorCode();
             ex.printStackTrace();
+        }finally{
+              try {
+                  SentenciaPreparada.close();
+              } catch (SQLException ex) {
+                  Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+              }
         }
         return cod;
     }

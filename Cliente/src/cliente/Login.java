@@ -133,29 +133,31 @@ public class Login extends javax.swing.JFrame {
         byte[] correoCifrado;
         correo = txtUsuario.getText().toString();
         clave = pwdContrasena.getText().toString();
-        claveBytes = clave.getBytes();
-
-        claveResumida = s.resumirMensaje(claveBytes);
-        
-        correoCifrado = s.cifrarMensaje(correo, correoContrasena);
-        
-        correoContrasena.setCorreo(correoCifrado);
-        correoContrasena.setClaveResumida(claveResumida);
+        claveResumida = s.resumirMensaje(clave);
         try {
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            SecretKey claveSimetrica = kg.generateKey();
+
+            correoCifrado = s.cifrarMensaje(correo, claveSimetrica);
+
+            correoContrasena.setCorreo(correoCifrado);
+            correoContrasena.setClaveResumida(claveResumida);
+            correoContrasena.setClaveSimetrica(claveSimetrica);
+
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
-            String codigoRespuesta = "1";
-            
+            String codigoRespuesta = "";
+
             ps.println("");
             ps.println(login);
 
-            
             oos.writeObject(correoContrasena);
-            
+
             datos.readLine();
             codigoRespuesta = datos.readLine();
 
@@ -168,6 +170,8 @@ public class Login extends javax.swing.JFrame {
         } catch (UnknownHostException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 

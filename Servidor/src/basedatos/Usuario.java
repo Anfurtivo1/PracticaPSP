@@ -11,7 +11,7 @@ package basedatos;
  */
 public class Usuario {
     private String correo;
-    private String clave;
+    private byte[] clave;
     private String nick;
     private String nombre;
     private String apellido;
@@ -19,7 +19,7 @@ public class Usuario {
     
     
 
-    public Usuario(String correo, String clave, String nick, String nombre, String apellido, String foto) {
+    public Usuario(String correo, byte[] clave, String nick, String nombre, String apellido, String foto) {
         this.correo = correo;
         this.clave = clave;
         this.nick = nick;
@@ -28,7 +28,7 @@ public class Usuario {
         this.foto = foto;
     }
     
-    public Usuario(String correo, String clave, String nick, String nombre, String apellido) {
+    public Usuario(String correo, byte[] clave, String nick, String nombre, String apellido) {
         this.correo = correo;
         this.clave = clave;
         this.nick = nick;
@@ -52,11 +52,11 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public String getClave() {
+    public byte[] getClave() {
         return clave;
     }
 
-    public void setClave(String clave) {
+    public void setClave(byte[] clave) {
         this.clave = clave;
     }
 

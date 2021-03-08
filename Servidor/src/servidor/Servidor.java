@@ -33,17 +33,18 @@ public class Servidor {
         ServerSocket server;
         Socket cliente;
         String accion;
-
         server = new ServerSocket(1234);
-        System.out.println("Esperando");
-        cliente = server.accept();
-        ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
-        System.out.println("Ha llegado un usuario");
 
-        
-        HiloServidor hilo = new HiloServidor(cliente,ois);
-        hilo.start();
-        
+        while (true) {
+            
+            System.out.println("Esperando");
+            cliente = server.accept();
+            ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
+            System.out.println("Ha llegado un usuario");
+
+            HiloServidor hilo = new HiloServidor(cliente, ois);
+            hilo.start();
+        }
 
     }
 
