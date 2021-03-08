@@ -77,8 +77,6 @@ public class HiloServidor extends Thread {
             byte[] correoCifrado = mensajeServidor.getCorreo();
             byte[] correoDescifrado = c.doFinal(correoCifrado);
             String correo = new String(correoDescifrado);
-            ps.println("");
-            ps.println("1");
             bd.abrirConexion();
             Usuario usuario = bd.buscarPorCorreoClave(correo, mensajeServidor.getClaveResumida());
             bd.cerrarConexion();
@@ -91,15 +89,17 @@ public class HiloServidor extends Thread {
                 if (valido) {
                     System.out.println("Las claves son iguales");
                     ps.println("");
-                    ps.println("1");
+                    ps.println("Encontrado");
                 } else {
                     System.out.println("Las claves no son iguales");
                     ps.println("");
-                    ps.println("0");
+                    ps.println("No encontrado");
                 }
 
             } else {
                 System.out.println("No se ha encontrado el usuario");
+                ps.println("");
+                ps.println("No encontrado");
             }
         } catch (Exception e) {
             e.printStackTrace();

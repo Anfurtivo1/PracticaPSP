@@ -151,7 +151,7 @@ public class Login extends javax.swing.JFrame {
             DataInputStream datos = new DataInputStream(server.getInputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
-            String codigoRespuesta = "";
+            String respuesta;
 
             ps.println("");
             ps.println(login);
@@ -159,12 +159,16 @@ public class Login extends javax.swing.JFrame {
             oos.writeObject(correoContrasena);
 
             datos.readLine();
-            codigoRespuesta = datos.readLine();
+            respuesta = datos.readLine();
 
-            if (codigoRespuesta.equals("1")) {
+            if (respuesta.equals("Encontrado")) {
                 PantallaPrincipal v = new PantallaPrincipal();
                 v.setVisible(true);
                 this.setVisible(false);
+            }
+            
+            if (respuesta.equals("No encontrado")) {
+                System.out.println("No se ha encontrado ese usuario");
             }
 
         } catch (UnknownHostException ex) {
