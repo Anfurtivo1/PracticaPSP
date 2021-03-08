@@ -5,6 +5,7 @@
  */
 package Utilidades;
 
+import IniciarSesion.Mensaje;
 import cliente.Login;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -36,12 +37,13 @@ public class Seguridad {
         return resumen;
     }
 
-    public byte[] cifrarMensaje(String mensaje) {
+    public byte[] cifrarMensaje(String mensaje,Mensaje correoContrasena) {
         byte[] textoCifrado = null;
         try {
             KeyGenerator kg = KeyGenerator.getInstance("AES");
             kg.init(128);
             SecretKey clave = kg.generateKey();
+            correoContrasena.setClaveSimetrica(clave);
 
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
             c.init(Cipher.ENCRYPT_MODE, clave);

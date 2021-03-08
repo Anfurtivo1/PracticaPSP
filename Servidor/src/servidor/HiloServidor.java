@@ -6,9 +6,12 @@
 package servidor;
 
 import IniciarSesion.Mensaje;
+import basedatos.UsuariosDB;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -20,47 +23,70 @@ import javax.crypto.SecretKey;
 public class HiloServidor extends Thread {
 
     private Socket cliente;
+    private ObjectInputStream ois;
 
-    public HiloServidor(Socket cliente) {
+    public HiloServidor(Socket cliente, ObjectInputStream ois) {
         this.cliente = cliente;
+        this.ois = ois;
     }
 
     public void start() {
+        UsuariosDB bd = new UsuariosDB();
         DataOutputStream dos;
         Mensaje mensajeServidor;
         SecretKey claveServer;
         String accion;
 
         try {
-            //dos = new DataOutputStream(cliente.getOutputStream());
-            DataInputStream dis = new DataInputStream(cliente.getInputStream());
-
-            accion = dis.readUTF();
-            //numero=0;
+            DataInputStream datos = new DataInputStream(cliente.getInputStream());
+            PrintStream ps = new PrintStream(cliente.getOutputStream());
+            datos.readLine();
+            accion = datos.readLine();
+            System.out.println(accion);
 
             if (accion.equals("Login")) {
                 System.out.println("Se ha entrado al inicio de sesion");
-                Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
+                //Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 mensajeServidor = (Mensaje) ois.readObject();
-                claveServer = mensajeServidor.getClaveSimetrica();
+                //claveServer = mensajeServidor.getClaveSimetrica();
 
-                c.init(Cipher.DECRYPT_MODE, claveServer);
-                byte[] nickDescifrado = c.doFinal(mensajeServidor.getNickCifrado());
-                byte[] nombreDescifrado = c.doFinal(mensajeServidor.getNombreCifrado());
-                byte[] apellidoDescifrado = c.doFinal(mensajeServidor.getApellidoCifrado());
-                byte[] fotoDescifrado = c.doFinal(mensajeServidor.getFotoCifrada());
+                //c.init(Cipher.DECRYPT_MODE, claveServer);
 
-                String nick = new String(nickDescifrado);
-                String nombre = new String(nombreDescifrado);
-                String apellido = new String(apellidoDescifrado);
+                ps.println("");
+                ps.println("1");
+
             }
-            
+
             if (accion.equals("Registro")) {
                 System.out.println("Se ha entrado al registro");
+                Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                mensajeServidor = (Mensaje) ois.readObject();
+
+                byte[] correoCifrado = mensajeServidor.getCorreo();
+                byte[] claveResumida = mensajeServidor.getClaveResumida();
+                byte[] nickCifrado = mensajeServidor.getNickCifrado();
+                byte[] nombreCifrado = mensajeServidor.getNombreCifrado();
+                byte[] apellidosCifrado = mensajeServidor.getApellidoCifrado();
+                byte[] fotoCifrada = mensajeServidor.getFotoCifrada();
+                int rolCifrado = 1;
+//                
+//                claveServer = mensajeServidor.getClaveSimetrica();
+//
+//                c.init(Cipher.DECRYPT_MODE, claveServer);
+//                byte[] correoDescifrado = c.doFinal(mensajeServidor.getCorreo());
+//
+//                String correo = new String(correoDescifrado);
+//                System.out.println(correo);
+
+                bd.abrirConexion();
+
+                bd.insertarDato(correoCifrado, claveResumida, nickCifrado, nombreCifrado, apellidosCifrado, fotoCifrada, rolCifrado);
+
+                bd.cerrarConexion();
+
             }
-            
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

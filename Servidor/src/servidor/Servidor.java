@@ -6,8 +6,10 @@
 package servidor;
 
 import IniciarSesion.Mensaje;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.InvalidKeyException;
@@ -30,13 +32,16 @@ public class Servidor {
     public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, ClassNotFoundException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         ServerSocket server;
         Socket cliente;
+        String accion;
 
         server = new ServerSocket(1234);
         System.out.println("Esperando");
         cliente = server.accept();
+        ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
         System.out.println("Ha llegado un usuario");
+
         
-        HiloServidor hilo = new HiloServidor(cliente);
+        HiloServidor hilo = new HiloServidor(cliente,ois);
         hilo.start();
         
 

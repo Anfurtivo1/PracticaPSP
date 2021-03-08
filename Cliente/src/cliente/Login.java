@@ -7,9 +7,11 @@ package cliente;
 
 import IniciarSesion.Mensaje;
 import Utilidades.Seguridad;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -30,9 +32,9 @@ import javax.crypto.SecretKey;
  */
 public class Login extends javax.swing.JFrame {
 
-    Seguridad s = new Seguridad();
-    Socket server;
-    InetAddress ip;
+    private Seguridad s = new Seguridad();
+    private Socket server;
+    private InetAddress ip;
 
     /**
      * Creates new form Login
@@ -123,31 +125,41 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarSesion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesion1ActionPerformed
-        Mensaje correoContrasena;
+        Mensaje correoContrasena = new Mensaje();
         String correo;
         String clave;
         byte[] claveBytes;
-        byte[] claveCifrada;
+        byte[] claveResumida;
+        byte[] correoCifrado;
         correo = txtUsuario.getText().toString();
         clave = pwdContrasena.getText().toString();
-        //claveBytes = clave.getBytes();
+        claveBytes = clave.getBytes();
 
-        claveCifrada = s.cifrarMensaje(clave);
-        correoContrasena = new Mensaje(correo, claveCifrada);
-
+        claveResumida = s.resumirMensaje(claveBytes);
+        
+        correoCifrado = s.cifrarMensaje(correo, correoContrasena);
+        
+        correoContrasena.setCorreo(correoCifrado);
+        correoContrasena.setClaveResumida(claveResumida);
         try {
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
-            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+            DataInputStream datos = new DataInputStream(server.getInputStream());
+            PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
-            int codigoRespuesta = 1;
+            String codigoRespuesta = "1";
+            
+            ps.println("");
+            ps.println(login);
 
-            dos.writeUTF(login);
-
+            
             oos.writeObject(correoContrasena);
+            
+            datos.readLine();
+            codigoRespuesta = datos.readLine();
 
-            if (codigoRespuesta == 1) {
+            if (codigoRespuesta.equals("1")) {
                 PantallaPrincipal v = new PantallaPrincipal();
                 v.setVisible(true);
                 this.setVisible(false);

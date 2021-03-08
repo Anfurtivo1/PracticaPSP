@@ -26,7 +26,7 @@ public class UsuariosDB {
     //(Cursor) En él están almacenados los datos.
     
     
-    public void abrirConexion() {
+    public synchronized void abrirConexion() {
         try {
             //Cargar el driver/controlador
             String controlador = "org.mariadb.jdbc.Driver"; // MariaDB la version libre de MySQL (requiere incluir la librería jar correspondiente).
@@ -42,7 +42,7 @@ public class UsuariosDB {
         }
     }
     
-    public void cerrarConexion() {
+    public synchronized void cerrarConexion() {
         try {
             this.Conex.close();
             System.out.println("Desconectado de la Base de Datos"); // Opcional para seguridad
@@ -70,14 +70,15 @@ public class UsuariosDB {
     }
     
     //------------------------------------------------------
-    public int insertarDato(String correo, byte[] pass) {
-        //,Nick,Nombre,Apellidos,Foto
-        String Sentencia = "INSERT INTO " + Constantes.TablaUsuarios + "(Correo,Clave) VALUES ('" + correo + "'," + "'" + pass + "')";
+    public int insertarDato(byte[] correo, byte[] pass,byte[] nick,byte[] nombre,byte[] apellidos,byte[] foto,int rol) {
+        
+        String Sentencia = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES (null,'" + correo + "'," + "'" + pass + "',"+ "'" + nick + "'," + "'" + nombre + "'," + "'" + apellidos + "'," + "'" + foto + "'," + "'" + 0 + "'," + "'" + rol + "')";
         int cod = 0;
         try {
             Sentencia_SQL.executeUpdate(Sentencia);
         } catch (SQLException ex) {
             cod = ex.getErrorCode();
+            ex.printStackTrace();
         }
         return cod;
     }

@@ -5,20 +5,36 @@
  */
 package cliente;
 
+import IniciarSesion.Mensaje;
 import Utilidades.Seguridad;
+import java.awt.Image;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author anfur
  */
 public class Registro2 extends javax.swing.JFrame {
-    Seguridad s = new Seguridad();
-    Socket server;
-    InetAddress ip;
+
+    private Seguridad s = new Seguridad();
+    private Socket server;
+    private InetAddress ip;
+    private byte[]imagen;
+
     /**
      * Creates new form Registro2
      */
@@ -44,6 +60,15 @@ public class Registro2 extends javax.swing.JFrame {
         pwdContrasenaRegistroRepetir = new javax.swing.JPasswordField();
         btnAceptarRegistro = new javax.swing.JButton();
         btnVolverRegistro = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        txtNickRegistro = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtNombreRegistro = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        txtApellidoRegistro = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        btnElegirImagen = new javax.swing.JButton();
+        lblImagen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,51 +92,112 @@ public class Registro2 extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Nick");
+
+        jLabel5.setText("Nombre");
+
+        txtNombreRegistro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreRegistroActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Apellido");
+
+        jLabel7.setText("Foto");
+
+        btnElegirImagen.setText("Elegir imagen");
+        btnElegirImagen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnElegirImagenActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlRegistrarseLayout = new javax.swing.GroupLayout(pnlRegistrarse);
         pnlRegistrarse.setLayout(pnlRegistrarseLayout);
         pnlRegistrarseLayout.setHorizontalGroup(
             pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                 .addGap(81, 81, 81)
-                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                         .addComponent(btnAceptarRegistro)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnElegirImagen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnVolverRegistro))
-                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(pwdContrasenaRegistroRepetir, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnVolverRegistro)
+                        .addGap(52, 52, 52))
                     .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                         .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(54, 54, 54)
-                        .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pwdContrasenaRegistro)
-                            .addComponent(txtUsuarioRegistro))))
-                .addContainerGap(94, Short.MAX_VALUE))
+                            .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                                    .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel1)
+                                        .addComponent(jLabel2))
+                                    .addGap(54, 54, 54)
+                                    .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(pwdContrasenaRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                        .addComponent(txtUsuarioRegistro)))
+                                .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                                    .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel6))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtApellidoRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                                        .addComponent(pwdContrasenaRegistroRepetir)
+                                        .addComponent(txtNickRegistro)
+                                        .addComponent(txtNombreRegistro))))
+                            .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(81, 81, 81)
+                                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         pnlRegistrarseLayout.setVerticalGroup(
             pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlRegistrarseLayout.createSequentialGroup()
-                .addGap(80, 80, 80)
+                .addGap(18, 18, 18)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtUsuarioRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(pwdContrasenaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(pwdContrasenaRegistroRepetir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                        .addComponent(txtNickRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombreRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtApellidoRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)))
+                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel7))
+                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAceptarRegistro)
+                    .addComponent(btnElegirImagen)
                     .addComponent(btnVolverRegistro))
-                .addGap(41, 41, 41))
+                .addGap(34, 34, 34))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -125,9 +211,9 @@ public class Registro2 extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlRegistrarse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlRegistrarse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -136,13 +222,45 @@ public class Registro2 extends javax.swing.JFrame {
 
     private void btnAceptarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarRegistroActionPerformed
         try {
-            ip=InetAddress.getLocalHost();
-            server = new Socket (ip,1234);
+            ip = InetAddress.getLocalHost();
+            server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
-            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
-            String registro="Registro";
-            dos.writeUTF(registro);
-            
+            PrintStream ps = new PrintStream(server.getOutputStream());
+            String registro = "Registro";
+            Mensaje registrarse = new Mensaje();
+            String usuario = txtUsuarioRegistro.getText().toString();
+            String clave = pwdContrasenaRegistro.getPassword().toString();
+            String nick = txtNickRegistro.getText().toString();
+            String nombre = txtNombreRegistro.getText().toString();
+            String apellido = txtApellidoRegistro.getText().toString();
+            byte[] foto;
+            byte[] claveByte = clave.getBytes();
+
+            byte[] usuarioCifrado;
+            byte[] claveResumida = s.resumirMensaje(claveByte);
+            byte[] nickCifrado;
+            byte[] nombreCifrado;
+            byte[] apellidosCifrado;
+            byte[] fotoCifrada;
+
+            nickCifrado = s.cifrarMensaje(usuario, registrarse);
+            usuarioCifrado = s.cifrarMensaje(usuario, registrarse);
+            nombreCifrado = s.cifrarMensaje(usuario, registrarse);
+            apellidosCifrado = s.cifrarMensaje(usuario, registrarse);
+            fotoCifrada = s.cifrarMensaje(usuario, registrarse);
+
+            registrarse.setCorreo(usuarioCifrado);
+            registrarse.setClaveResumida(claveResumida);
+            registrarse.setNickCifrado(nickCifrado);
+            registrarse.setNombreCifrado(nombreCifrado);
+            registrarse.setApellidoCifrado(apellidosCifrado);
+            registrarse.setFotoCifrada(fotoCifrada);
+
+            ps.println("");
+            ps.println(registro);
+
+            oos.writeObject(registrarse);
+
         } catch (Exception e) {
         }
     }//GEN-LAST:event_btnAceptarRegistroActionPerformed
@@ -153,16 +271,70 @@ public class Registro2 extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverRegistroActionPerformed
 
+    private void txtNombreRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreRegistroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreRegistroActionPerformed
+
+    private void btnElegirImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElegirImagenActionPerformed
+        JFileChooser fc = new JFileChooser();
+
+//        FileFilter logFilefilter = new FileFilter() {
+//
+//            public boolean accept(File file) {
+//
+//                if (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")) {
+//                    return true;
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public String getDescription() {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//        };
+
+        fc.setDialogTitle("Buscar imagen");
+        //fc.setFileFilter(logFilefilter);
+
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File archivo = fc.getSelectedFile();
+            String origen = archivo.getPath();
+            ImageIcon icon = new ImageIcon(new ImageIcon(origen).getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
+            try {
+                DataInputStream dis = new DataInputStream(new FileInputStream(archivo));
+                imagen = new byte[(int) archivo.length()];
+                dis.readFully(imagen);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Registro2.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Registro2.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            lblImagen.setIcon(icon);
+        }
+
+    }//GEN-LAST:event_btnElegirImagenActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptarRegistro;
+    private javax.swing.JButton btnElegirImagen;
     private javax.swing.JButton btnVolverRegistro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel lblImagen;
     private javax.swing.JPanel pnlRegistrarse;
     private javax.swing.JPasswordField pwdContrasenaRegistro;
     private javax.swing.JPasswordField pwdContrasenaRegistroRepetir;
+    private javax.swing.JTextField txtApellidoRegistro;
+    private javax.swing.JTextField txtNickRegistro;
+    private javax.swing.JTextField txtNombreRegistro;
     private javax.swing.JTextField txtUsuarioRegistro;
     // End of variables declaration//GEN-END:variables
 }

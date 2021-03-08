@@ -12,17 +12,18 @@ import javax.crypto.SecretKey;
  *
  * @author anfur
  */
-public class Mensaje implements Serializable{
-    private String correo;
+public class Mensaje implements Serializable {
+
+    private byte[] correoCifrado;
     private byte[] nickCifrado;
     private byte[] nombreCifrado;
     private byte[] apellidoCifrado;
     private byte[] fotoCifrada;
     private byte[] claveResumida;
     private SecretKey claveSimetrica;
-    
-    public Mensaje(String correo, byte[] nickCifrado, byte[] nombreCifrado, byte[] apellidoCifrado, byte[] fotoCifrada, byte[] claveResumida, SecretKey claveSimetrica) {
-        this.correo = correo;
+
+    public Mensaje(byte[] correo, byte[] nickCifrado, byte[] nombreCifrado, byte[] apellidoCifrado, byte[] fotoCifrada, byte[] claveResumida, SecretKey claveSimetrica) {
+        this.correoCifrado = correoCifrado;
         this.nickCifrado = nickCifrado;
         this.nombreCifrado = nombreCifrado;
         this.apellidoCifrado = apellidoCifrado;
@@ -31,25 +32,15 @@ public class Mensaje implements Serializable{
         this.claveSimetrica = claveSimetrica;
     }
 
-    public byte[] getApellidoCifrado() {
-        return apellidoCifrado;
-    }
-
-    public byte[] getFotoCifrada() {
-        return fotoCifrada;
-    }
-
-    public byte[] getNombreCifrado() {
-        return nombreCifrado;
-    }
-    
-
-    
-
-    public Mensaje(String correo, byte[] claveCifrada) {
-        this.correo = correo;
+    public Mensaje(byte[] correoCifrado, byte[] claveCifrada) {
+        this.correoCifrado = correoCifrado;
         this.nickCifrado = claveCifrada;
     }
+
+    public Mensaje() {
+
+    }
+
 
     public void setClaveSimetrica(SecretKey claveSimetrica) {
         this.claveSimetrica = claveSimetrica;
@@ -67,12 +58,12 @@ public class Mensaje implements Serializable{
         this.claveResumida = claveResumida;
     }
 
-    public String getCorreo() {
-        return correo;
+    public byte[] getCorreo() {
+        return correoCifrado;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setCorreo(byte[] correo) {
+        this.correoCifrado = correo;
     }
 
     public byte[] getNickCifrado() {
@@ -82,7 +73,39 @@ public class Mensaje implements Serializable{
     public void setNickCifrado(byte[] nickCifrado) {
         this.nickCifrado = nickCifrado;
     }
+
+    public byte[] getCorreoCifrado() {
+        return correoCifrado;
+    }
+
+    public void setCorreoCifrado(byte[] correoCifrado) {
+        this.correoCifrado = correoCifrado;
+    }
+
+    public byte[] getNombreCifrado() {
+        return nombreCifrado;
+    }
+
+    public void setNombreCifrado(byte[] nombreCifrado) {
+        this.nombreCifrado = nombreCifrado;
+    }
+
+    public byte[] getApellidoCifrado() {
+        return apellidoCifrado;
+    }
+
+    public void setApellidoCifrado(byte[] apellidoCifrado) {
+        this.apellidoCifrado = apellidoCifrado;
+    }
+
+    public byte[] getFotoCifrada() {
+        return fotoCifrada;
+    }
+
+    public void setFotoCifrada(byte[] fotoCifrada) {
+        this.fotoCifrada = fotoCifrada;
+    }
     
     
-    
+
 }

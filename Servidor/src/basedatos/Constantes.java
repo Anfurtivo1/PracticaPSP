@@ -12,7 +12,7 @@ public class Constantes {
     public static String usuario = "root";
     public static String passwd = "";
     
-    public static String TablaUsuarios = "usuario";
+    public static String TablaUsuarios = "usuarios";
     
     //public static String ficheroBitacora = "bitacora.txt";
 }
