@@ -6,6 +6,7 @@
 package servidor;
 
 import IniciarSesion.Mensaje;
+import Preferencias.Preferencias;
 import Utilidades.Seguridad;
 import basedatos.Usuario;
 import basedatos.UsuariosDB;
@@ -17,6 +18,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.security.MessageDigest;
 import javax.crypto.Cipher;
+import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
 
 /**
@@ -61,6 +63,24 @@ public class HiloServidor extends Thread {
             if (accion.equals("Registro")) {
                 registrarse(ps, claveServer, mensajeServidor);
             }
+
+            if (accion.equals("editarPreferencias")) {
+                System.out.println("Se ha entrado a editar las preferencias");
+                SealedObject prefs = (SealedObject) ois.readObject();
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                Preferencias p = (Preferencias)prefs.getObject(c);
+                System.out.println(p);
+                
+                bd.insertarPreferencias(p.isRelacionSeria(),p.getDeportivo(),p.getArtistico(),p.getPolitico(),
+                                    p.isTieneHijos(),p.isQuiereHijos(),
+                                    p.isInteresHombre(),p.isInteresMujer(),p.getIdUsuario());
+            }
+
+            if (accion.equals("editarUsuario")) {
+                System.out.println("Se ha entrado a editar un usuario");
+                
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -71,7 +91,6 @@ public class HiloServidor extends Thread {
 
     private synchronized void iniciarSesion(PrintStream ps, SecretKey claveServer, Mensaje mensajeServidor) {
         try {
-
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
             c.init(Cipher.DECRYPT_MODE, claveServer);
             byte[] correoCifrado = mensajeServidor.getCorreo();
@@ -90,6 +109,7 @@ public class HiloServidor extends Thread {
                     System.out.println("Las claves son iguales");
                     ps.println("");
                     ps.println("Encontrado");
+                    ps.println("" + usuario.getId());
                 } else {
                     System.out.println("Las claves no son iguales");
                     ps.println("");

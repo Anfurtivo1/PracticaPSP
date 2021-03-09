@@ -10,6 +10,7 @@ package basedatos;
  * @author anfur
  */
 public class Usuario {
+    private int id;
     private String correo;
     private byte[] clave;
     private String nick;
@@ -27,6 +28,17 @@ public class Usuario {
         this.apellido = apellido;
         this.foto = foto;
     }
+
+    public Usuario(int id, String correo, byte[] clave, String nick, String nombre, String apellido) {
+        this.id = id;
+        this.correo = correo;
+        this.clave = clave;
+        this.nick = nick;
+        this.nombre = nombre;
+        this.apellido = apellido;
+    }
+    
+    
     
     public Usuario(String correo, byte[] clave, String nick, String nombre, String apellido) {
         this.correo = correo;
@@ -35,6 +47,16 @@ public class Usuario {
         this.nombre = nombre;
         this.apellido = apellido;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
 
     public String getNombre() {
         return nombre;

@@ -152,6 +152,7 @@ public class Login extends javax.swing.JFrame {
             PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
             String respuesta;
+            String id;
 
             ps.println("");
             ps.println(login);
@@ -160,9 +161,11 @@ public class Login extends javax.swing.JFrame {
 
             datos.readLine();
             respuesta = datos.readLine();
+            id = datos.readLine();
+            System.out.println(id);
 
             if (respuesta.equals("Encontrado")) {
-                PantallaPrincipal v = new PantallaPrincipal();
+                PantallaPrincipal v = new PantallaPrincipal(id);
                 v.setVisible(true);
                 this.setVisible(false);
             }

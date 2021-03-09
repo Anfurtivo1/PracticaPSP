@@ -10,11 +10,19 @@ package cliente;
  * @author anfur
  */
 public class EditarUsuario extends javax.swing.JFrame {
-
+    private String id;
     /**
      * Creates new form EditarUsuario
      */
     public EditarUsuario() {
+        initComponents();
+    }
+    
+    /**
+     * Creates new form EditarUsuario
+     */
+    public EditarUsuario(String id) {
+        this.id = id;
         initComponents();
     }
 
@@ -158,13 +166,13 @@ public class EditarUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal();
+        PantallaPrincipal v = new PantallaPrincipal(id);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnEditarPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPreferenciasActionPerformed
-        EditarPreferencias v = new EditarPreferencias();
+        EditarPreferencias v = new EditarPreferencias(id);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPreferenciasActionPerformed

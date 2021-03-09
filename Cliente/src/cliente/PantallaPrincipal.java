@@ -11,10 +11,18 @@ package cliente;
  * @author anfur
  */
 public class PantallaPrincipal extends javax.swing.JFrame {
-
+    private String id;
+    
     /** Creates new form PantallaPrincipal */
     public PantallaPrincipal() {
         initComponents();
+    }
+    
+    /** Creates new form PantallaPrincipal */
+    public PantallaPrincipal(String id) {
+        this.id = id;
+        initComponents();
+        
     }
 
     /** This method is called from within the constructor to
@@ -166,13 +174,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPerfilActionPerformed
-        EditarUsuario v = new EditarUsuario();
+        EditarUsuario v = new EditarUsuario(id);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPerfilActionPerformed
 
     private void btnAccederCRUDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccederCRUDActionPerformed
-        PantallaAdministradores v = new PantallaAdministradores();
+        PantallaAdministradores v = new PantallaAdministradores(id);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAccederCRUDActionPerformed

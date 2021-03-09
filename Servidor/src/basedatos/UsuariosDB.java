@@ -61,11 +61,11 @@ public class UsuariosDB {
         try {
             Sentencia_SQL = Conex.createStatement();
             //String Sentencia = "SELECT Correo FROM " + TablaUsuarios + " where Correo = '"+ correo +"' and Clave ='"+pass+"'";
-            String Sentencia = "SELECT Correo,Clave,Nick,Nombre,Apellidos FROM " + TablaUsuarios + " where Correo = '"+ correo +"'";
+            String Sentencia = "SELECT idUsuarios,Correo,Clave,Nick,Nombre,Apellidos FROM " + TablaUsuarios + " where Correo = '"+ correo +"'";
             Conj_Registros = Sentencia_SQL.executeQuery(Sentencia);
             if (Conj_Registros.next()) {
                 //System.out.println("Encontrado el usuario buscado");
-                usuario = new Usuario(Conj_Registros.getString("Correo"),Conj_Registros.getBytes("Clave"),Conj_Registros.getString("Nick"),Conj_Registros.getString("Nombre"),Conj_Registros.getString("Apellidos"));
+                usuario = new Usuario(Conj_Registros.getInt("idUsuarios"),Conj_Registros.getString("Correo"),Conj_Registros.getBytes("Clave"),Conj_Registros.getString("Nick"),Conj_Registros.getString("Nombre"),Conj_Registros.getString("Apellidos"));
                 return usuario;
             }
             
@@ -107,5 +107,40 @@ public class UsuariosDB {
         }
         return cod;
     }
+    
+    public synchronized int insertarPreferencias(boolean relacionSeria,int deportivo,int artistico,
+                                                int politico,boolean tieneHijos,boolean quiereHijos,
+                                                boolean interesHombre,boolean interesMujer,int id){
+        int cod=0;
+        //0 false y 1 true
+        String sentencia = "INSERT INTO "+ Constantes.TablaPreferencias+" VALUES(?,?,?,?,?,?,?,?,?,?)";
+        
+        
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setString(1, null);//IDPref
+            SentenciaPreparada.setBoolean(2, relacionSeria);//Relacion seria
+            SentenciaPreparada.setInt(3, deportivo);//Deportivo
+            SentenciaPreparada.setInt(4, artistico);//Artistico
+            SentenciaPreparada.setInt(5, politico);//Politico
+            SentenciaPreparada.setBoolean(6, tieneHijos);//TieneHijos
+            SentenciaPreparada.setBoolean(7, quiereHijos);//QuiereHijos
+            SentenciaPreparada.setBoolean(8, interesMujer);//Mujer
+            SentenciaPreparada.setBoolean(9, interesHombre);//Hombre
+            SentenciaPreparada.setInt(10, id);//id usuario
+            SentenciaPreparada.executeUpdate();
+        } catch (SQLException e) {
+            cod = e.getErrorCode();
+        }finally{
+              try {
+                  SentenciaPreparada.close();
+              } catch (SQLException ex) {
+                  Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+              }
+        }
+        
+        return cod;
+    }
+    
     
 }

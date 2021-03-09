@@ -13,6 +13,7 @@ public class Constantes {
     public static String passwd = "";
     
     public static String TablaUsuarios = "usuarios";
+    public static String TablaPreferencias = "preferencias";
     
     //public static String ficheroBitacora = "bitacora.txt";
 }

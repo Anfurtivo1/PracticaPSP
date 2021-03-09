@@ -5,16 +5,43 @@
  */
 package cliente;
 
+import IniciarSesion.Mensaje;
+import Preferencias.Preferencias;
+import Utilidades.Seguridad;
+import java.io.DataInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
+
 /**
  *
  * @author anfur
  */
 public class EditarPreferencias extends javax.swing.JFrame {
 
+    private String id;
+    private Preferencias pref;
+    private Seguridad s = new Seguridad();
+    private Socket server;
+    private InetAddress ip;
+
     /**
      * Creates new form EditarPreferencias
      */
     public EditarPreferencias() {
+        initComponents();
+    }
+
+    /**
+     * Creates new form EditarPreferencias
+     */
+    public EditarPreferencias(String id) {
+        this.id = id;
         initComponents();
     }
 
@@ -58,11 +85,22 @@ public class EditarPreferencias extends javax.swing.JFrame {
 
         cbGustos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chico", "Chica", "Ambos" }));
 
+        spDeportivo.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+
+        spArtistico.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+
+        spPolitico.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
+
         cbRelacionSeria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Relación seria", "Relación esporádica" }));
 
-        cbHijos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tiene hijos", "Quiere hijos" }));
+        cbHijos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tiene hijos", "Quiere hijos", "Ninguna" }));
 
         btnGuardar.setText("Guardar preferencias");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnVolver.setText("Volver");
         btnVolver.addActionListener(new java.awt.event.ActionListener() {
@@ -140,10 +178,93 @@ public class EditarPreferencias extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal();
+        PantallaPrincipal v = new PantallaPrincipal(id);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+
+        int idUsuario = Integer.parseInt(id);
+        boolean relacionSeria = false;
+        boolean tieneHijos = false;
+        boolean quiereHijos = false;
+        boolean interesMujer = false;
+        boolean interesHombre = false;
+        boolean interesAmbos = false;
+        int deportivo;
+        int artistico;
+        int politico;
+        if (cbRelacionSeria.getSelectedItem().toString().equals("Relación seria")) {
+            relacionSeria = true;
+        } else {
+            relacionSeria = false;
+        }
+
+        if (cbHijos.getSelectedItem().toString().equals("Tiene hijos")) {
+            tieneHijos = true;
+        }
+
+        if (cbHijos.getSelectedItem().toString().equals("Quiere hijos")) {
+            quiereHijos = true;
+        }
+
+        deportivo = (int) spDeportivo.getValue();
+        artistico = (int) spArtistico.getValue();
+        politico = (int) spPolitico.getValue();
+
+        String interesHombreMujerAmbos = cbGustos.getSelectedItem().toString();
+
+        if (interesHombreMujerAmbos.equals("")) {
+            interesMujer = true;
+        }
+
+        if (interesHombreMujerAmbos.equals("")) {
+            interesHombre = true;
+        }
+
+        if (interesHombreMujerAmbos.equals("")) {
+            interesAmbos = true;
+        }
+
+        pref = new Preferencias(idUsuario, relacionSeria, deportivo, artistico, politico, tieneHijos,quiereHijos, interesHombre,interesMujer,interesAmbos);
+
+        //System.out.println(pref);
+        try {
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            SecretKey claveSimetrica = kg.generateKey();
+            ip = InetAddress.getLocalHost();
+            server = new Socket(ip, 1234);
+            ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+            DataInputStream datos = new DataInputStream(server.getInputStream());
+            PrintStream ps = new PrintStream(server.getOutputStream());
+            String editarPreferencias = "editarPreferencias";
+            String respuesta;
+
+            ps.println("");
+            ps.println(editarPreferencias);
+
+            Mensaje mensaje = new Mensaje();
+            mensaje.setClaveSimetrica(claveSimetrica);
+
+            oos.writeObject(mensaje);
+
+            Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            c.init(Cipher.ENCRYPT_MODE, claveSimetrica);
+            //Creamos un objeto encapsulado con el cipher creado anteriormente y el objeto que queremos encapsular (tiene que implementar serializable)
+            SealedObject sealedObject = new SealedObject(pref, c);
+
+            oos.writeObject(sealedObject);
+
+            //datos.readLine();
+            //respuesta = datos.readLine();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
