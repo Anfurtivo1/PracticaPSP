@@ -16,7 +16,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
@@ -41,7 +45,11 @@ public class HiloServidor extends Thread {
         DataOutputStream dos;
         DataInputStream datos = null;
         PrintStream ps = null;
-        SecretKey claveServer;
+        SecretKey claveServer = null;
+        Mensaje mensajeServidor = null;
+        PrivateKey clavepriv = null;
+        PublicKey clavepubl = null;
+        PublicKey clavepublCliente = null;
         String accion;
 
         try {
@@ -50,14 +58,27 @@ public class HiloServidor extends Thread {
             datos.readLine();
             accion = datos.readLine();
             System.out.println(accion);
-            Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            //Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            Cipher c = Cipher.getInstance("RSA/ECB/NOPADDING");
 
-            Mensaje mensajeServidor = (Mensaje) ois.readObject();
-            claveServer = mensajeServidor.getClaveSimetrica();
+            if (!accion.equals("editarPreferencias") && !accion.equals("editarUsuario")) {
+                mensajeServidor = (Mensaje) ois.readObject();
+                claveServer = mensajeServidor.getClaveSimetrica();
+            }
+
+            if (accion.equals("editarPreferencias") || accion.equals("editarUsuario")) {
+                KeyPairGenerator KeyGen = KeyPairGenerator.getInstance("RSA");
+                KeyGen.initialize(2048);
+                KeyPair par = KeyGen.generateKeyPair();
+                clavepriv = par.getPrivate();
+                clavepubl = par.getPublic();
+                clavepublCliente = (PublicKey) ois.readObject();
+            }
 
             if (accion.equals("Login")) {
                 System.out.println("Se ha entrado al inicio de sesion");
                 iniciarSesion(ps, claveServer, mensajeServidor);
+                
             }
 
             if (accion.equals("Registro")) {
@@ -67,18 +88,24 @@ public class HiloServidor extends Thread {
             if (accion.equals("editarPreferencias")) {
                 System.out.println("Se ha entrado a editar las preferencias");
                 SealedObject prefs = (SealedObject) ois.readObject();
-                c.init(Cipher.DECRYPT_MODE, claveServer);
-                Preferencias p = (Preferencias)prefs.getObject(c);
+                c.init(Cipher.DECRYPT_MODE, clavepriv);
+                Preferencias p = (Preferencias) prefs.getObject(c);
                 System.out.println(p);
-                
-                bd.insertarPreferencias(p.isRelacionSeria(),p.getDeportivo(),p.getArtistico(),p.getPolitico(),
-                                    p.isTieneHijos(),p.isQuiereHijos(),
-                                    p.isInteresHombre(),p.isInteresMujer(),p.getIdUsuario());
+
+                bd.insertarPreferencias(p.isRelacionSeria(), p.getDeportivo(), p.getArtistico(), p.getPolitico(),
+                        p.isTieneHijos(), p.isQuiereHijos(),
+                        p.isInteresHombre(), p.isInteresMujer(), p.getIdUsuario());
             }
 
             if (accion.equals("editarUsuario")) {
                 System.out.println("Se ha entrado a editar un usuario");
-                
+                SealedObject usu = (SealedObject) ois.readObject();
+                c.init(Cipher.DECRYPT_MODE, clavepriv);
+                Usuario p = (Usuario) usu.getObject(c);
+                System.out.println(p);
+
+                bd.actualizarUsuario(p.getId(),p.getCorreo(), p.getClave(), p.getNick(), p.getNombre(),p.getApellido());
+
             }
 
         } catch (Exception e) {
@@ -91,6 +118,9 @@ public class HiloServidor extends Thread {
 
     private synchronized void iniciarSesion(PrintStream ps, SecretKey claveServer, Mensaje mensajeServidor) {
         try {
+            boolean primeraVez;
+            boolean esAdmin;
+            boolean esActivado;
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
             c.init(Cipher.DECRYPT_MODE, claveServer);
             byte[] correoCifrado = mensajeServidor.getCorreo();
@@ -98,6 +128,9 @@ public class HiloServidor extends Thread {
             String correo = new String(correoDescifrado);
             bd.abrirConexion();
             Usuario usuario = bd.buscarPorCorreoClave(correo, mensajeServidor.getClaveResumida());
+            primeraVez=bd.esPrimeraVez(usuario.getId());
+            esAdmin=bd.esAdmin(usuario.getId());
+            esActivado = bd.esActivado(usuario.getId());
             bd.cerrarConexion();
 
             if (usuario != null) {
@@ -110,6 +143,38 @@ public class HiloServidor extends Thread {
                     ps.println("");
                     ps.println("Encontrado");
                     ps.println("" + usuario.getId());
+                    
+                    if (esActivado) {
+                        System.out.println("El usuario esta activado");
+                        ps.println("activado");
+                    }
+                    
+                    if (!esActivado) {
+                        System.out.println("El usuario no esta activado");
+                        ps.println("no activado");
+                    }
+                    
+                    if (!primeraVez) {
+                        System.out.println("No es su primera vez");
+                        ps.println("no primera");
+                    }
+                    
+                    if (primeraVez) {
+                        System.out.println("Es su primera vez");
+                        ps.println("primera");
+                        bd.actualizarPrimeraVez(usuario.getId());
+                    }
+                    
+                    if (!esAdmin) {
+                        System.out.println("Es un usuario normal");
+                        ps.println("normal");
+                    }
+                    
+                    if (esAdmin) {
+                        System.out.println("Es un admin");
+                        ps.println("admin");
+                    }
+                    
                 } else {
                     System.out.println("Las claves no son iguales");
                     ps.println("");

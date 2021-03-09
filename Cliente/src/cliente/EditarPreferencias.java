@@ -13,6 +13,10 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SealedObject;
@@ -178,7 +182,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id);
+        PantallaPrincipal v = new PantallaPrincipal(id,"");
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
@@ -231,9 +235,11 @@ public class EditarPreferencias extends javax.swing.JFrame {
 
         //System.out.println(pref);
         try {
-            KeyGenerator kg = KeyGenerator.getInstance("AES");
-            kg.init(128);
-            SecretKey claveSimetrica = kg.generateKey();
+            KeyPairGenerator KeyGen = KeyPairGenerator.getInstance("RSA");
+            KeyGen.initialize(2048);
+            KeyPair par = KeyGen.generateKeyPair();
+            PrivateKey clavepriv = par.getPrivate();
+            PublicKey clavepubl = par.getPublic();
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
@@ -245,13 +251,10 @@ public class EditarPreferencias extends javax.swing.JFrame {
             ps.println("");
             ps.println(editarPreferencias);
 
-            Mensaje mensaje = new Mensaje();
-            mensaje.setClaveSimetrica(claveSimetrica);
-
-            oos.writeObject(mensaje);
+            oos.writeObject(clavepubl);
 
             Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            c.init(Cipher.ENCRYPT_MODE, claveSimetrica);
+            c.init(Cipher.ENCRYPT_MODE, clavepubl);
             //Creamos un objeto encapsulado con el cipher creado anteriormente y el objeto que queremos encapsular (tiene que implementar serializable)
             SealedObject sealedObject = new SealedObject(pref, c);
 

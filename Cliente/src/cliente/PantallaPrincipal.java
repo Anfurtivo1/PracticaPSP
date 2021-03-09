@@ -12,6 +12,7 @@ package cliente;
  */
 public class PantallaPrincipal extends javax.swing.JFrame {
     private String id;
+    private String admin;
     
     /** Creates new form PantallaPrincipal */
     public PantallaPrincipal() {
@@ -19,9 +20,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }
     
     /** Creates new form PantallaPrincipal */
-    public PantallaPrincipal(String id) {
+    public PantallaPrincipal(String id,String admin) {
         this.id = id;
+        this.admin = admin;
         initComponents();
+        if (admin.equals("normal")) {
+            btnAccederCRUD.setVisible(false);
+        }
         
     }
 

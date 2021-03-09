@@ -56,10 +56,8 @@ public class Registro2 extends javax.swing.JFrame {
         pnlRegistrarse = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         txtUsuarioRegistro = new javax.swing.JTextField();
         pwdContrasenaRegistro = new javax.swing.JPasswordField();
-        pwdContrasenaRegistroRepetir = new javax.swing.JPasswordField();
         btnAceptarRegistro = new javax.swing.JButton();
         btnVolverRegistro = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
@@ -74,11 +72,9 @@ public class Registro2 extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Usuario");
+        jLabel1.setText("Correo");
 
         jLabel2.setText("Password");
-
-        jLabel3.setText("Repetir Password");
 
         btnAceptarRegistro.setText("Aceptar");
         btnAceptarRegistro.addActionListener(new java.awt.event.ActionListener() {
@@ -142,14 +138,12 @@ public class Registro2 extends javax.swing.JFrame {
                                         .addComponent(txtUsuarioRegistro)))
                                 .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                                     .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel3)
                                         .addComponent(jLabel4)
                                         .addComponent(jLabel5)
                                         .addComponent(jLabel6))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGap(61, 61, 61)
                                     .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txtApellidoRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                                        .addComponent(pwdContrasenaRegistroRepetir)
                                         .addComponent(txtNickRegistro)
                                         .addComponent(txtNombreRegistro))))
                             .addGroup(pnlRegistrarseLayout.createSequentialGroup()
@@ -169,11 +163,7 @@ public class Registro2 extends javax.swing.JFrame {
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(pwdContrasenaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(pwdContrasenaRegistroRepetir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(28, 28, 28)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                         .addComponent(txtNickRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -329,7 +319,6 @@ public class Registro2 extends javax.swing.JFrame {
     private javax.swing.JButton btnVolverRegistro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -337,7 +326,6 @@ public class Registro2 extends javax.swing.JFrame {
     private javax.swing.JLabel lblImagen;
     private javax.swing.JPanel pnlRegistrarse;
     private javax.swing.JPasswordField pwdContrasenaRegistro;
-    private javax.swing.JPasswordField pwdContrasenaRegistroRepetir;
     private javax.swing.JTextField txtApellidoRegistro;
     private javax.swing.JTextField txtNickRegistro;
     private javax.swing.JTextField txtNombreRegistro;

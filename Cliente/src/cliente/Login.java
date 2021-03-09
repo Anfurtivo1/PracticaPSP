@@ -162,14 +162,32 @@ public class Login extends javax.swing.JFrame {
             datos.readLine();
             respuesta = datos.readLine();
             id = datos.readLine();
+            String activado = datos.readLine();
+            String primeraVez = datos.readLine();
+            String esAdmin = datos.readLine();
             System.out.println(id);
+            System.out.println(activado);
+            System.out.println(primeraVez);
+            System.out.println(esAdmin);
 
             if (respuesta.equals("Encontrado")) {
-                PantallaPrincipal v = new PantallaPrincipal(id);
-                v.setVisible(true);
-                this.setVisible(false);
+                if (activado.equals("activado")) {
+                    if (primeraVez.equals("primera")) {
+                        System.out.println("Se van a cargar las preferencias del nuevo usuario");
+                        EditarPreferencias v = new EditarPreferencias(id);
+                        v.setVisible(true);
+                        this.setVisible(false);
+                    } else {
+                        PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
+                        v.setVisible(true);
+                        this.setVisible(false);
+                    }
+                }else{
+                    System.out.println("Ese usuario no estaba activado");
+                }
+
             }
-            
+
             if (respuesta.equals("No encontrado")) {
                 System.out.println("No se ha encontrado ese usuario");
             }
