@@ -38,6 +38,11 @@ public class Usuario implements Serializable{
         this.nombre = nombre;
         this.apellido = apellido;
     }
+
+    public Usuario(int id, String nick) {
+        this.id = id;
+        this.nick = nick;
+    }
     
     
     

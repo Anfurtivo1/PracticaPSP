@@ -247,16 +247,25 @@ public class EditarPreferencias extends javax.swing.JFrame {
             PrintStream ps = new PrintStream(server.getOutputStream());
             String editarPreferencias = "editarPreferencias";
             String respuesta;
+            
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            SecretKey claveSimetrica = kg.generateKey();
 
             ps.println("");
             ps.println(editarPreferencias);
+            Mensaje mensaje = new Mensaje();
+            mensaje.setClaveSimetrica(claveSimetrica);
 
-            oos.writeObject(clavepubl);
+            oos.writeObject(mensaje);
 
-            Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            c.init(Cipher.ENCRYPT_MODE, clavepubl);
+            Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            c.init(Cipher.ENCRYPT_MODE, claveSimetrica);
+            
+            Preferencias pref2 = new Preferencias(1);
+            
             //Creamos un objeto encapsulado con el cipher creado anteriormente y el objeto que queremos encapsular (tiene que implementar serializable)
-            SealedObject sealedObject = new SealedObject(pref, c);
+            SealedObject sealedObject = new SealedObject(pref2, c);
 
             oos.writeObject(sealedObject);
 

@@ -183,8 +183,8 @@ public class UsuariosDB {
     public synchronized void actualizarPrimeraVez(int id){
         String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET PRIMERAVEZ = 0 WHERE IDUSUARIOS = "+id;
         try {
-            SentenciaPreparada = Conex.prepareStatement(sentencia);
-            SentenciaPreparada.executeUpdate();
+            
+            Sentencia_SQL.executeUpdate(sentencia);
         } catch (Exception e) {
         }
             
@@ -220,6 +220,25 @@ public class UsuariosDB {
             System.out.println("Error en: " + ex);
         }
         return activado;
+    }
+    
+    public synchronized ArrayList<Usuario> buscarAmigos(int id) {
+        ArrayList lp = new ArrayList<Usuario>();
+        boolean activado = false;
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            String Sentencia = "select idusuarios,nick from usuarios where idusuarios in (select idusuario1 from usuariosgustados where idusuario2="+id+" and idusuario1 in (select idUsuario2 from usuariosgustados where idUsuario1 = "+id+"));";
+            Conj_Registros = Sentencia_SQL.executeQuery(Sentencia);
+            while (Conj_Registros.next()) {
+                Usuario usuario = new Usuario(Conj_Registros.getInt("idUsuarios"),Conj_Registros.getString("Nick"));
+                lp.add(usuario);
+            }
+            
+            return lp;
+        } catch (SQLException ex) {
+            System.out.println("Error en: " + ex);
+        }
+        return lp;
     }
 
 }

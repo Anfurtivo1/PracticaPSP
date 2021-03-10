@@ -23,6 +23,12 @@ public class Preferencias implements Serializable{
     private boolean interesMujer;
     private boolean interesAmbos;
 
+    public Preferencias(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+    
+    
+
     public Preferencias(int idUsuario, boolean relacionSeria, int deportivo, int artistico, int politico, boolean tieneHijos, boolean quiereHijos, boolean interesHombre, boolean interesMujer, boolean interesAmbos) {
         this.idUsuario = idUsuario;
         this.relacionSeria = relacionSeria;
@@ -116,10 +122,7 @@ public class Preferencias implements Serializable{
         this.interesAmbos = interesAmbos;
     }
 
-    @Override
-    public String toString() {
-        return "Preferencias{" + "idUsuario=" + idUsuario + ", relacionSeria=" + relacionSeria + ", deportivo=" + deportivo + ", artistico=" + artistico + ", politico=" + politico + ", tieneHijos=" + tieneHijos + ", quiereHijos=" + quiereHijos + ", interesHombre=" + interesHombre + ", interesMujer=" + interesMujer + ", interesAmbos=" + interesAmbos + '}';
-    }
+    
 
     
     

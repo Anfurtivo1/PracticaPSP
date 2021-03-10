@@ -7,9 +7,11 @@ package cliente;
 
 import IniciarSesion.Mensaje;
 import Utilidades.Seguridad;
+import basedatos.ListaUsuarios;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -148,6 +150,7 @@ public class Login extends javax.swing.JFrame {
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
@@ -178,6 +181,8 @@ public class Login extends javax.swing.JFrame {
                         v.setVisible(true);
                         this.setVisible(false);
                     } else {
+                        ListaUsuarios amigos;
+                        amigos=(ListaUsuarios) ois.readObject();
                         PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
                         v.setVisible(true);
                         this.setVisible(false);
@@ -197,6 +202,8 @@ public class Login extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 

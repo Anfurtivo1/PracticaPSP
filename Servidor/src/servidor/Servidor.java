@@ -9,6 +9,7 @@ import IniciarSesion.Mensaje;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -40,9 +41,10 @@ public class Servidor {
             System.out.println("Esperando");
             cliente = server.accept();
             ObjectInputStream ois = new ObjectInputStream(cliente.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(cliente.getOutputStream());
             System.out.println("Ha llegado un usuario");
 
-            HiloServidor hilo = new HiloServidor(cliente, ois);
+            HiloServidor hilo = new HiloServidor(cliente, ois,oos);
             hilo.start();
         }
 
