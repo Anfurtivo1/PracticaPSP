@@ -7,6 +7,7 @@ package servidor;
 
 import IniciarSesion.RegistrarUsuario;
 import Preferencias.Preferencias;
+import Utilidades.ListaMensajes;
 import Utilidades.Seguridad;
 import basedatos.ListaUsuarios;
 import basedatos.Mensaje;
@@ -92,8 +93,22 @@ public class HiloServidor extends Thread {
 
             }
             
-            if (accion.equals("recuperarMensajess")) {
-                ArrayList<String>mensajes = new ArrayList<String>();
+            if (accion.equals("enviarArchivo")) {
+                System.out.println("Se ha recibido un mensaje");
+                Mensaje mensajeCliente = (Mensaje) ois.readObject();
+                claveServer = mensajeCliente.getClave();
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] archivoCifrado = mensajeCliente.getArchivo();
+                byte[] archivoDescifrado = c.doFinal(archivoCifrado);
+                System.out.println("Enviado archivo de: "+mensajeCliente.getIdUsuario1()+" a: "+mensajeCliente.getIdUsuario2());
+                bd.abrirConexion();
+                bd.insertarArchivo(mensajeCliente.getIdUsuario1(), mensajeCliente.getIdUsuario2(), archivoDescifrado);
+                bd.cerrarConexion();
+            }
+            
+            if (accion.equals("recuperarMensajes")) {
+                ListaMensajes mensajes = new ListaMensajes(null);
                 dos = new DataOutputStream(cliente.getOutputStream());
                 System.out.println("Se van a recuperar los mensajes");
                 c = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -106,8 +121,46 @@ public class HiloServidor extends Thread {
                 mensajes=bd.recuperarMensajes(idUsuario);
                 bd.cerrarConexion();
                 
+                oos.writeObject(mensajes);
                 
+            }
+            
+            if (accion.equals("agregarAmigo")) {
+                System.out.println("Se va a agregar un amigo");
+                RegistrarUsuario amigoAgregar = (RegistrarUsuario) ois.readObject();
+                claveServer = amigoAgregar.getClaveSimetrica();
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] idCifrado = amigoAgregar.getIdCifrado();
+                byte[] idDescifrado = c.doFinal(idCifrado);
+                byte[] nickCifrado = amigoAgregar.getNickCifrado();
+                byte[] nickDescifrado = c.doFinal(nickCifrado);
+                String nick = new String(nickDescifrado);
+                String id= new String(idDescifrado);
+                int idUsuario = Integer.parseInt(id);
                 
+                bd.abrirConexion();
+                bd.agregarAmigos(idUsuario, nick);
+                bd.cerrarConexion();
+            }
+            
+            if (accion.equals("eliminarAmigo")) {
+                System.out.println("Se va a agregar un amigo");
+                RegistrarUsuario amigoAgregar = (RegistrarUsuario) ois.readObject();
+                claveServer = amigoAgregar.getClaveSimetrica();
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] idCifrado = amigoAgregar.getIdCifrado();
+                byte[] idDescifrado = c.doFinal(idCifrado);
+                byte[] nickCifrado = amigoAgregar.getNickCifrado();
+                byte[] nickDescifrado = c.doFinal(nickCifrado);
+                String nick = new String(nickDescifrado);
+                String id= new String(idDescifrado);
+                int idUsuario = Integer.parseInt(id);
+                
+                bd.abrirConexion();
+                bd.eliminarAmigos(idUsuario, nick);
+                bd.cerrarConexion();
             }
             
 

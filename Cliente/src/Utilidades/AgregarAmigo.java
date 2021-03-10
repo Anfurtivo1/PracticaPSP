@@ -5,7 +5,7 @@
  */
 package Utilidades;
 
-import basedatos.Mensaje;
+import IniciarSesion.RegistrarUsuario;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
@@ -20,47 +20,52 @@ import javax.crypto.SecretKey;
  *
  * @author anfur
  */
-public class EnviarArchivo {
-
+public class AgregarAmigo {
     private Socket server;
     private InetAddress ip;
     private Seguridad s = new Seguridad();
-
-    public void enviarArchivo(byte[] fichero, int usuarioId1, int usuarioId2) {
-        Mensaje archivo;
-        byte[] ficheroCifrado;
-        String ficheroS = new String(fichero);
-
+    
+    public void agregarAmigo(String id, String nick){
+        RegistrarUsuario amigoAgregar = new RegistrarUsuario();
+        byte [] nickCifrado;
+        byte [] idCifrado;
+        
         try {
+            
             KeyGenerator kg = KeyGenerator.getInstance("AES");
             kg.init(128);
             SecretKey claveSimetrica = kg.generateKey();
 
-            ficheroCifrado = s.cifrarMensaje(ficheroS, claveSimetrica);
-
-            archivo = new Mensaje(ficheroCifrado);
-            archivo.setClave(claveSimetrica);
-
+            nickCifrado = s.cifrarMensaje(nick, claveSimetrica);
+            idCifrado = s.cifrarMensaje(id, claveSimetrica);
+            
+            amigoAgregar.setNickCifrado(nickCifrado);
+            amigoAgregar.setIdCifrado(idCifrado);
+            amigoAgregar.setClaveSimetrica(claveSimetrica);
+            
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
-
+            
+            
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
             DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
-            String enviarArchivo = "enviarArchivo";
-
+            String agregarAmigo = "agregarAmigo";
+            
             //ps.println("");
             dos.writeUTF("");
             //ps.println(activar);
-            dos.writeUTF(enviarArchivo);//Acción
+            dos.writeUTF(agregarAmigo);//Acción
 
-            oos.writeObject(archivo);
-
+            oos.writeObject(amigoAgregar);
+            
+            
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
+        
     }
-
+    
 }

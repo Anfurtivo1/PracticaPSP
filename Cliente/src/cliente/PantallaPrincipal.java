@@ -8,6 +8,7 @@ package cliente;
 import Utilidades.EnviarArchivo;
 import Utilidades.EnviarMensaje;
 import Utilidades.EnviarNick;
+import Utilidades.ListaMensajes;
 import Utilidades.RecuperarMensajes;
 import basedatos.ListaUsuarios;
 import basedatos.Usuario;
@@ -311,15 +312,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        ArrayList<String>mensajes = new ArrayList<String>();
+        ListaMensajes mensajes = new ListaMensajes(null);
         RecuperarMensajes recuperarMensajes = new RecuperarMensajes();
-        mensajes=recuperarMensajes.recuperarMensajes(id);
-        
-        for (int i = 0; i < mensajes.size(); i++) {
+        mensajes = recuperarMensajes.recuperarMensajes(id);
+
+        for (int i = 0; i < mensajes.getMensajes().size(); i++) {
             txaMensajes.append("\n");
-            txaMensajes.append(mensajes.get(i));
+            txaMensajes.append(mensajes.getMensajes().get(i));
         }
-        
+
     }//GEN-LAST:event_formWindowOpened
 
     private void lsAmigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lsAmigosMouseClicked
@@ -354,23 +355,40 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_lstNuevosUsuariosMouseClicked
 
     private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
-        EnviarArchivo enviarArchivo = new EnviarArchivo();
+
         try {
             JFileChooser fc = new JFileChooser();
             int valor = fc.showOpenDialog(fc);
             if (valor == JFileChooser.APPROVE_OPTION) {
                 String ruta = fc.getSelectedFile().getAbsolutePath();
                 byte[] array = Files.readAllBytes(Paths.get(ruta));
-                enviarArchivo.enviarArchivo(array);
+
+                EnviarArchivo enviarArchivo = new EnviarArchivo();
+                int idUsuario1 = Integer.parseInt(id);
+                int idUsuario2 = -1;
+                EnviarNick enviarNick = new EnviarNick();
+                if (lsAmigos.getSelectedIndex() != -1) {
+                    idUsuario2 = enviarNick.enviarNick(lsAmigos.getSelectedValue());
+                }
+                if (lstNuevosUsuarios.getSelectedIndex() != -1) {
+                    idUsuario2 = enviarNick.enviarNick(lstNuevosUsuarios.getSelectedValue());
+                }
+
+                if (idUsuario2 != -1) {
+                    enviarArchivo.enviarArchivo(array,idUsuario1,idUsuario2);
+                }
+                
+                
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+
     }//GEN-LAST:event_btnEnviarArchivoActionPerformed
 
     private void btnEliminarAmigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAmigoActionPerformed
-        if (lsAmigos.getSelectedIndex()!=-1) {
+        if (lsAmigos.getSelectedIndex() != -1) {
             //Insertar conexion base de datos
             //EnviarNick enviarNick = new EnviarNick();
             //enviarNick.enviarNick(nick);

@@ -7,6 +7,7 @@ package basedatos;
 
 //import Cadena.Cadena;
 import Preferencias.Preferencias;
+import Utilidades.ListaMensajes;
 import static basedatos.Constantes.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -109,14 +110,13 @@ public class UsuariosDB {
 
     public synchronized int insertarMensajes(int idUsuario1, int idUsuario2, String mensaje) {
         int cod = 0;
-        String sentencia = "insert into mensajes values(?,?,?,?,?)";
+        String sentencia = "insert into mensajes values(null,?,?,?,null)";
 
         try {
             SentenciaPreparada = Conex.prepareStatement(sentencia);
-            SentenciaPreparada.setInt(1, 3);
-            SentenciaPreparada.setInt(2, idUsuario1);
-            SentenciaPreparada.setInt(3, idUsuario2);
-            SentenciaPreparada.setString(4, mensaje);
+            SentenciaPreparada.setInt(1, idUsuario1);
+            SentenciaPreparada.setInt(2, idUsuario2);
+            SentenciaPreparada.setString(3, mensaje);
             SentenciaPreparada.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,15 +176,14 @@ public class UsuariosDB {
     public synchronized int insertarArchivo(int idUsuario1, int idUsuario2, byte[] archivo) {
         int cod = 0;
 
-        String sentencia = "insert into mensajes values(?,?,?,?,?)";
+        String sentencia = "insert into mensajes values(null,?,?,?,?)";
 
         try {
             SentenciaPreparada = Conex.prepareStatement(sentencia);
-            SentenciaPreparada.setInt(1, 4);
-            SentenciaPreparada.setInt(2, idUsuario1);
-            SentenciaPreparada.setInt(3, idUsuario2);
-            SentenciaPreparada.setString(4, "");
-            SentenciaPreparada.setBytes(5, archivo);
+            SentenciaPreparada.setInt(1, idUsuario1);
+            SentenciaPreparada.setInt(2, idUsuario2);
+            SentenciaPreparada.setString(3, "");
+            SentenciaPreparada.setBytes(4, archivo);
             SentenciaPreparada.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -273,15 +272,17 @@ public class UsuariosDB {
         return primeraVez;
     }
 
-    public synchronized ArrayList<String> recuperarMensajes(int idUsuario) {
-        ArrayList<String> mensajes = new ArrayList<String>();
+    public synchronized ListaMensajes recuperarMensajes(int idUsuario) {
+        ArrayList<String>lista = new ArrayList<String>();
+        ListaMensajes mensajes = new ListaMensajes(lista);
+        
         try {
             Sentencia_SQL = Conex.createStatement();
             String sentencia = "select mensajeEscrito from mensajes where idUsuario2 = " + idUsuario;
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
                 String mensaje = Conj_Registros.getString("MensajeEscrito");
-                mensajes.add(mensaje);
+                mensajes.getMensajes().add(mensaje);
             }
             return mensajes;
 

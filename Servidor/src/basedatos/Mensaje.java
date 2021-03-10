@@ -17,11 +17,18 @@ public class Mensaje implements Serializable{
     private byte[] mensajeCifrado;
     private int idUsuario1;
     private int idUsuario2;
+    private byte[] archivo;
 
     public Mensaje(SecretKey clave, byte[] mensajeCifrado) {
         this.clave = clave;
         this.mensajeCifrado = mensajeCifrado;
     }
+
+    public Mensaje(byte[] archivo) {
+        this.archivo = archivo;
+    }
+    
+    
 
     public SecretKey getClave() {
         return clave;
@@ -53,6 +60,14 @@ public class Mensaje implements Serializable{
 
     public void setIdUsuario2(int idUsuario2) {
         this.idUsuario2 = idUsuario2;
+    }
+
+    public byte[] getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(byte[] archivo) {
+        this.archivo = archivo;
     }
     
     

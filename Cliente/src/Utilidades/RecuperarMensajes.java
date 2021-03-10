@@ -23,13 +23,13 @@ import javax.crypto.SecretKey;
  */
 public class RecuperarMensajes {
 
-    private ArrayList<String> mensajes;
+    private ListaMensajes mensajes;
     private Socket server;
     private InetAddress ip;
     private Seguridad s = new Seguridad();
 
-    public ArrayList<String> recuperarMensajes(String id) {
-        mensajes = new ArrayList<String>();
+    public ListaMensajes recuperarMensajes(String id) {
+        mensajes = new ListaMensajes(null);
         RegistrarUsuario idUsuario = new RegistrarUsuario();
         byte[] idCifrado;
         
@@ -61,7 +61,7 @@ public class RecuperarMensajes {
 
             oos.writeObject(idUsuario);
             
-            //mensajes=datos.read();
+            mensajes=(ListaMensajes) ois.readObject();
             
             return mensajes;
             
