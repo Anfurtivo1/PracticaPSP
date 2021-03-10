@@ -8,6 +8,7 @@ package cliente;
 import IniciarSesion.RegistrarUsuario;
 import Preferencias.Preferencias;
 import Utilidades.Seguridad;
+import basedatos.ListaUsuarios;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
@@ -35,6 +36,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     private Socket server;
     private InetAddress ip;
     private String admin;
+    private ListaUsuarios amigos;
 
     /**
      * Creates new form EditarPreferencias
@@ -59,6 +61,18 @@ public class EditarPreferencias extends javax.swing.JFrame {
         this.admin = admin;
         initComponents();
     }
+    
+    /**
+     * Creates new form EditarPreferencias
+     */
+    public EditarPreferencias(String id,String admin,ListaUsuarios amigos) {
+        this.id = id;
+        this.amigos = amigos;
+        this.admin = admin;
+        initComponents();
+    }
+    
+    //
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -193,7 +207,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,admin);
+        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed

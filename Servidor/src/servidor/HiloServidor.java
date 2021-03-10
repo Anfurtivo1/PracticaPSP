@@ -9,6 +9,7 @@ import IniciarSesion.RegistrarUsuario;
 import Preferencias.Preferencias;
 import Utilidades.Seguridad;
 import basedatos.ListaUsuarios;
+import basedatos.Mensaje;
 import basedatos.Usuario;
 import basedatos.UsuariosDB;
 import java.io.DataInputStream;
@@ -70,9 +71,22 @@ public class HiloServidor extends Thread {
             //Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
 
-            if (!accion.equals("editarPreferencias") && !accion.equals("editarUsuario")) {
+            if (!accion.equals("editarPreferencias") && !accion.equals("editarUsuario") && !accion.equals("enviarMensaje")) {
                 mensajeServidor = (RegistrarUsuario) ois.readObject();
                 claveServer = mensajeServidor.getClaveSimetrica();
+            }
+            
+            if (accion.equals("enviarMensaje")) {
+                System.out.println("Se ha recibido un mensaje");
+                Mensaje mensajeCliente = (Mensaje) ois.readObject();
+                claveServer = mensajeCliente.getClave();
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] mensajeCifrado = mensajeCliente.getMensajeCifrado();
+                byte[] mensajeDescifrado = c.doFinal(mensajeCifrado);
+                String mensaje = new String(mensajeDescifrado);
+                System.out.println(mensaje);
+                
             }
 
             if (accion.equals("activarUsuario")) {

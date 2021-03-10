@@ -194,7 +194,7 @@ public class Login extends javax.swing.JFrame {
                         this.setVisible(false);
                     } else {
 
-                        PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
+                        PantallaPrincipal v = new PantallaPrincipal(id, esAdmin,amigos);
                         v.setVisible(true);
                         this.setVisible(false);
                     }

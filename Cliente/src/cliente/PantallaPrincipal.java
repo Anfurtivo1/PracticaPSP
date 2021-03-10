@@ -5,6 +5,10 @@
  */
 package cliente;
 
+import Utilidades.EnviarMensaje;
+import basedatos.ListaUsuarios;
+import java.util.HashMap;
+import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -16,6 +20,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private String id;
     private String admin;
+    private ListaUsuarios amigos;
 
     /**
      * Creates new form PantallaPrincipal
@@ -30,6 +35,27 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     public PantallaPrincipal(String id, String admin) {
         this.id = id;
         this.admin = admin;
+        initComponents();
+        if (admin.equals("normal")) {
+            btnAccederCRUD.setVisible(false);
+        }
+
+    }
+
+    /**
+     * Creates new form PantallaPrincipal
+     */
+    public PantallaPrincipal(String id, String admin, ListaUsuarios amigos) {
+        this.id = id;
+        this.admin = admin;
+        this.amigos = amigos;
+        Map<Integer, String> mapaAmigos = new HashMap<Integer, String>();
+
+        for (int i = 0; i < amigos.getListaAmigos().size(); i++) {
+            //Map<String, Integer>.put(mapaAmigos.get(nick), mapaAmigos.get(id));
+            //lsAmigos.setModel(mapaAmigos.getkeys());
+        }
+
         initComponents();
         if (admin.equals("normal")) {
             btnAccederCRUD.setVisible(false);
@@ -76,6 +102,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabel1.setText("Escribe tu mensaje...");
 
         btnEnviarMensaje.setText("Enviar mensaje");
+        btnEnviarMensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarMensajeActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Nuevos usuarios que te podrían interesar");
 
@@ -115,6 +146,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        lsAmigos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lsAmigosMouseClicked(evt);
+            }
         });
         jScrollPane3.setViewportView(lsAmigos);
 
@@ -197,7 +233,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditarPerfilActionPerformed
 
     private void btnAccederCRUDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccederCRUDActionPerformed
-        PantallaAdministradores v = new PantallaAdministradores(id,admin);
+        PantallaAdministradores v = new PantallaAdministradores(id, admin,amigos);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAccederCRUDActionPerformed
@@ -209,15 +245,20 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        try {
-            KeyGenerator kg = KeyGenerator.getInstance("AES");
-            kg.init(128);
-            SecretKey claveSimetrica = kg.generateKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }//GEN-LAST:event_formWindowOpened
+
+    private void lsAmigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lsAmigosMouseClicked
+         String amigoSeleccionado = String.valueOf(lsAmigos.getSelectedValue());
+         System.out.println(amigoSeleccionado);
+    }//GEN-LAST:event_lsAmigosMouseClicked
+
+    private void btnEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarMensajeActionPerformed
+        if (txtMensaje.getText().trim()!="") {
+            EnviarMensaje enviarMensaje = new EnviarMensaje(1,1);
+            enviarMensaje.enviarMensaje(txtMensaje.getText());
+        }
+    }//GEN-LAST:event_btnEnviarMensajeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

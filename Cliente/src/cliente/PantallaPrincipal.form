@@ -135,6 +135,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Enviar mensaje"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEnviarMensajeActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtMensaje">
     </Component>
@@ -221,6 +224,9 @@
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lsAmigosMouseClicked"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
