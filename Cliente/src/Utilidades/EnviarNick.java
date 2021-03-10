@@ -25,10 +25,10 @@ public class EnviarNick {
     private InetAddress ip;
     private Seguridad s = new Seguridad();
     
-    public void enviarNick(String nick){
+    public int enviarNick(String nick){
         RegistrarUsuario nickUsuario = new RegistrarUsuario();
         byte [] nickCifrado;
-        
+        int idUsuario=-1;
         try {
             KeyGenerator kg = KeyGenerator.getInstance("AES");
             kg.init(128);
@@ -36,7 +36,7 @@ public class EnviarNick {
 
             nickCifrado = s.cifrarMensaje(nick, claveSimetrica);
             
-            nickUsuario.setIdCifrado(nickCifrado);
+            nickUsuario.setNickCifrado(nickCifrado);
             nickUsuario.setClaveSimetrica(claveSimetrica);
             
             ip = InetAddress.getLocalHost();
@@ -52,14 +52,18 @@ public class EnviarNick {
             //ps.println("");
             dos.writeUTF("");
             //ps.println(activar);
-            dos.writeUTF(enviarNick);
+            dos.writeUTF(enviarNick);//Acción
 
             oos.writeObject(nickUsuario);
+            
+            idUsuario=datos.readInt();
+            return idUsuario;
             
         } catch (Exception e) {
             e.printStackTrace();
         }
         
+        return idUsuario;
     }
     
 }

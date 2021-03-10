@@ -107,6 +107,30 @@ public class UsuariosDB {
         return cod;
     }
 
+    public synchronized int insertarMensajes(int idUsuario1, int idUsuario2, String mensaje) {
+        int cod = 0;
+        String sentencia = "insert into mensajes values(?,?,?,?)";
+        
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setInt(1, 3);
+            SentenciaPreparada.setInt(2, idUsuario1);
+            SentenciaPreparada.setInt(3, idUsuario2);
+            SentenciaPreparada.setString(4, mensaje);
+            SentenciaPreparada.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                SentenciaPreparada.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return cod;
+    }
+
     public synchronized int insertarPreferencias(boolean relacionSeria, int deportivo, int artistico,
             int politico, boolean tieneHijos, boolean quiereHijos,
             boolean interesHombre, boolean interesMujer, int id) {
@@ -180,6 +204,26 @@ public class UsuariosDB {
         }
         return primeraVez;
     }
+    
+    public synchronized ArrayList<String> recuperarMensajes(int idUsuario){
+        ArrayList<String>mensajes = new ArrayList<String>();
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            String sentencia= "select mensajeEscrito from mensajes where idUsuario2 = "+idUsuario;
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+            while (Conj_Registros.next()) {
+                String mensaje = Conj_Registros.getString("MensajeEscrito");
+                mensajes.add(mensaje);
+            }
+            return mensajes;
+            
+        } catch (Exception e) {
+        }
+        
+        
+        return mensajes;
+    }
+    
 
     public synchronized void actualizarPrimeraVez(int id) {
         String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET PRIMERAVEZ = 0 WHERE IDUSUARIOS = " + id;

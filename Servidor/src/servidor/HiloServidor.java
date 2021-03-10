@@ -85,21 +85,27 @@ public class HiloServidor extends Thread {
                 byte[] mensajeCifrado = mensajeCliente.getMensajeCifrado();
                 byte[] mensajeDescifrado = c.doFinal(mensajeCifrado);
                 String mensaje = new String(mensajeDescifrado);
-                System.out.println(mensaje);
+                System.out.println("Mensaje "+mensaje+" Enviado de: "+mensajeCliente.getIdUsuario1()+" a: "+mensajeCliente.getIdUsuario2());
+                bd.abrirConexion();
+                bd.insertarMensajes(mensajeCliente.getIdUsuario1(), mensajeCliente.getIdUsuario2(), mensaje);
+                bd.cerrarConexion();
 
             }
 
             if (accion.equals("enviarNick")) {
+                dos = new DataOutputStream(cliente.getOutputStream());
                 System.out.println("Se ha recibido el nick");
                 c = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 c.init(Cipher.DECRYPT_MODE, claveServer);
                 byte[] nickCifrado = mensajeServidor.getNickCifrado();
                 byte[] nickDescifrado = c.doFinal(nickCifrado);
                 String nick = new String(nickDescifrado);
+                System.out.println(nick);
 
                 bd.abrirConexion();
                 int id = bd.buscarPorNick(nick);
                 bd.cerrarConexion();
+                dos.writeInt(id);
 
             }
 
