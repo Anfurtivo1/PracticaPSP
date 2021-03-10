@@ -7,6 +7,7 @@ package cliente;
 
 import Utilidades.EnviarMensaje;
 import Utilidades.EnviarNick;
+import Utilidades.RecuperarMensajes;
 import basedatos.ListaUsuarios;
 import basedatos.Usuario;
 import java.awt.Component;
@@ -309,7 +310,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
+        ArrayList<String>mensajes = new ArrayList<String>();
+        RecuperarMensajes recuperarMensajes = new RecuperarMensajes();
+        mensajes=recuperarMensajes.recuperarMensajes(id);
+        
+        for (int i = 0; i < mensajes.size(); i++) {
+            txaMensajes.append("\n");
+            txaMensajes.append(mensajes.get(i));
+        }
+        
     }//GEN-LAST:event_formWindowOpened
 
     private void lsAmigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lsAmigosMouseClicked

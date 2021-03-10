@@ -91,6 +91,25 @@ public class HiloServidor extends Thread {
                 bd.cerrarConexion();
 
             }
+            
+            if (accion.equals("recuperarMensajess")) {
+                ArrayList<String>mensajes = new ArrayList<String>();
+                dos = new DataOutputStream(cliente.getOutputStream());
+                System.out.println("Se van a recuperar los mensajes");
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] idCifrado= mensajeServidor.getIdCifrado();
+                byte[] idDescifrado = c.doFinal(idCifrado);
+                String id = new String(idDescifrado);
+                int idUsuario = Integer.parseInt(id);
+                bd.abrirConexion();
+                mensajes=bd.recuperarMensajes(idUsuario);
+                bd.cerrarConexion();
+                
+                
+                
+            }
+            
 
             if (accion.equals("enviarNick")) {
                 dos = new DataOutputStream(cliente.getOutputStream());

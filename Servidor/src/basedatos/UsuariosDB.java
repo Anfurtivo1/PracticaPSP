@@ -218,9 +218,8 @@ public class UsuariosDB {
             return mensajes;
             
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        
         return mensajes;
     }
     
