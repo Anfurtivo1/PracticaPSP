@@ -5,6 +5,7 @@
  */
 package cliente;
 
+import Utilidades.EnviarArchivo;
 import Utilidades.EnviarMensaje;
 import Utilidades.EnviarNick;
 import Utilidades.RecuperarMensajes;
@@ -353,14 +354,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_lstNuevosUsuariosMouseClicked
 
     private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
-
+        EnviarArchivo enviarArchivo = new EnviarArchivo();
         try {
             JFileChooser fc = new JFileChooser();
             int valor = fc.showOpenDialog(fc);
             if (valor == JFileChooser.APPROVE_OPTION) {
                 String ruta = fc.getSelectedFile().getAbsolutePath();
                 byte[] array = Files.readAllBytes(Paths.get(ruta));
-                //Insertar en base de datos
+                enviarArchivo.enviarArchivo(array);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,6 +371,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void btnEliminarAmigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAmigoActionPerformed
         if (lsAmigos.getSelectedIndex()!=-1) {
+            //Insertar conexion base de datos
+            //EnviarNick enviarNick = new EnviarNick();
+            //enviarNick.enviarNick(nick);
             String nick = (String) lsAmigos.getSelectedValue();
             nicks.removeElement(nick);
         }
