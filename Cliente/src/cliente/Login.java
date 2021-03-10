@@ -153,37 +153,47 @@ public class Login extends javax.swing.JFrame {
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
-            PrintStream ps = new PrintStream(server.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+            //PrintStream ps = new PrintStream(server.getOutputStream());
             String login = "Login";
             String respuesta;
             String id;
 
-            ps.println("");
-            ps.println(login);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(login);
+            dos.writeUTF(login);
 
             oos.writeObject(correoContrasena);
 
-            datos.readLine();
-            respuesta = datos.readLine();
-            id = datos.readLine();
+            //datos.readLine();
+            //ois.readUTF();
+            //respuesta = datos.readLine();
+            respuesta = datos.readUTF();
+            //id = datos.readLine();
+            id = datos.readUTF();
             System.out.println(id);
-            String activado = datos.readLine();
+            //String activado = datos.readLine();
+            String activado = datos.readUTF();
             System.out.println(activado);
-            String primeraVez = datos.readLine();
+            //String primeraVez = datos.readLine();
+            String primeraVez = datos.readUTF();
             System.out.println(primeraVez);
-            String esAdmin = datos.readLine();
+            ListaUsuarios amigos;
+            amigos=(ListaUsuarios) ois.readObject();
+            //String esAdmin = datos.readLine();
+            String esAdmin = datos.readUTF();
             System.out.println(esAdmin);
 
             if (respuesta.equals("Encontrado")) {
                 if (activado.equals("activado")) {
                     if (primeraVez.equals("primera")) {
                         System.out.println("Se van a cargar las preferencias del nuevo usuario");
-                        EditarPreferencias v = new EditarPreferencias(id,esAdmin);
+                        EditarPreferencias v = new EditarPreferencias(id, esAdmin);
                         v.setVisible(true);
                         this.setVisible(false);
                     } else {
-                        //ListaUsuarios amigos;
-                        //amigos=(ListaUsuarios) ois.readObject();
+
                         PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
                         v.setVisible(true);
                         this.setVisible(false);
@@ -203,6 +213,8 @@ public class Login extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 

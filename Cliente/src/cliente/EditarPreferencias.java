@@ -9,6 +9,7 @@ import IniciarSesion.RegistrarUsuario;
 import Preferencias.Preferencias;
 import Utilidades.Seguridad;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -254,6 +255,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String editarPreferencias = "editarPreferencias";
             String respuesta;
@@ -262,9 +264,12 @@ public class EditarPreferencias extends javax.swing.JFrame {
             kg.init(128);
             SecretKey claveSimetrica = kg.generateKey();
 
-            ps.println("");
-            ps.println(editarPreferencias);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(editarPreferencias);
+            dos.writeUTF(editarPreferencias);
             RegistrarUsuario mensaje = new RegistrarUsuario();
+            
             mensaje.setClaveSimetrica(claveSimetrica);
 
             oos.writeObject(mensaje);
@@ -272,10 +277,10 @@ public class EditarPreferencias extends javax.swing.JFrame {
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
             c.init(Cipher.ENCRYPT_MODE, claveSimetrica);
             
-            Preferencias pref2 = new Preferencias(1);
+            //Preferencias pref2 = new Preferencias(1);
             
             //Creamos un objeto encapsulado con el cipher creado anteriormente y el objeto que queremos encapsular (tiene que implementar serializable)
-            SealedObject sealedObject = new SealedObject(pref2, c);
+            SealedObject sealedObject = new SealedObject(pref, c);
 
             oos.writeObject(sealedObject);
 

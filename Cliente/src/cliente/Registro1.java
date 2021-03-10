@@ -9,6 +9,7 @@ import IniciarSesion.RegistrarUsuario;
 import Utilidades.Seguridad;
 import java.awt.Image;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -233,6 +234,7 @@ public class Registro1 extends javax.swing.JFrame {
             kg.init(128);
             SecretKey claveSimetrica = kg.generateKey();
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String registro = "Registro";
             RegistrarUsuario registrarse = new RegistrarUsuario();
@@ -269,8 +271,10 @@ public class Registro1 extends javax.swing.JFrame {
 
             registrarse.setClaveSimetrica(claveSimetrica);
 
-            ps.println("");
-            ps.println(registro);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(registro);
+            dos.writeUTF(registro);
 
             oos.writeObject(registrarse);
 

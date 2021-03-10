@@ -142,21 +142,15 @@ public class UsuariosDB {
     public synchronized int actualizarUsuario(int id, String correo, byte[] pass, String nick, String nombre, String apellidos) {
         int cod = 0;
 
-        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = (?), SET CLAVE = (?), SET NICK = (?), SET NOMBRE = (?), SET APELLIDOS = (?) WHERE IDUSUARIOS=" + id + "";
+        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = '"+correo+"', CLAVE = '"+pass+"', NICK = '"+nick+"', NOMBRE = '"+nombre+"', APELLIDOS = '"+apellidos+"' WHERE IDUSUARIOS=" + id + "";
         try {
-            SentenciaPreparada = Conex.prepareStatement(sentencia);
-            SentenciaPreparada.setString(1, correo);
-            SentenciaPreparada.setBytes(2, pass);
-            SentenciaPreparada.setString(3, nick);
-            SentenciaPreparada.setString(4, nombre);
-            SentenciaPreparada.setString(5, apellidos);
-            SentenciaPreparada.executeUpdate();
+            Sentencia_SQL.executeUpdate(sentencia);
 
         } catch (SQLException e) {
             cod = e.getErrorCode();
         } finally {
             try {
-                SentenciaPreparada.close();
+                Sentencia_SQL.close();
             } catch (SQLException ex) {
                 Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
             }

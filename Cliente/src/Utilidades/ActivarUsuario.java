@@ -7,6 +7,7 @@ package Utilidades;
 
 import IniciarSesion.RegistrarUsuario;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
@@ -45,12 +46,15 @@ public class ActivarUsuario {
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(server.getInputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String activar = "activarUsuario";
             String respuesta;
 
-            ps.println("");
-            ps.println(activar);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(activar);
+            dos.writeUTF(activar);
 
             oos.writeObject(usuario);
         } catch (Exception e) {

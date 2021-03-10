@@ -56,12 +56,16 @@ public class HiloServidor extends Thread {
         PublicKey clavepubl = null;
         PublicKey clavepublCliente = null;
         String accion;
+        DataOutputStream dos = null;
 
         try {
             datos = new DataInputStream(cliente.getInputStream());
-            ps = new PrintStream(cliente.getOutputStream());
-            datos.readLine();
-            accion = datos.readLine();
+            
+            //ps = new PrintStream(cliente.getOutputStream());
+            //datos.readLine();
+            //accion = datos.readLine();
+            datos.readUTF();
+            accion = datos.readUTF();
             System.out.println(accion);
             //Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -105,12 +109,6 @@ public class HiloServidor extends Thread {
             }
 
             if (accion.equals("editarPreferencias") || accion.equals("editarUsuario")) {
-//                KeyPairGenerator KeyGen = KeyPairGenerator.getInstance("RSA");
-//                KeyGen.initialize(2048);
-//                KeyPair par = KeyGen.generateKeyPair();
-//                clavepriv = par.getPrivate();
-//                clavepubl = par.getPublic();
-//                clavepublCliente = (PublicKey) ois.readObject();
                 mensajeServidor = (RegistrarUsuario) ois.readObject();
                 claveServer = mensajeServidor.getClaveSimetrica();
             }
@@ -131,33 +129,33 @@ public class HiloServidor extends Thread {
                 c.init(Cipher.DECRYPT_MODE, claveServer);
                 Preferencias p = (Preferencias) prefs.getObject(c);
                 //System.out.println(p);
-
+                bd.abrirConexion();
                 bd.insertarPreferencias(p.isRelacionSeria(), p.getDeportivo(), p.getArtistico(), p.getPolitico(),
                         p.isTieneHijos(), p.isQuiereHijos(),
                         p.isInteresHombre(), p.isInteresMujer(), p.getIdUsuario());
+                bd.cerrarConexion();
             }
 
             if (accion.equals("editarUsuario")) {
                 System.out.println("Se ha entrado a editar un usuario");
                 SealedObject usu = (SealedObject) ois.readObject();
-                c.init(Cipher.DECRYPT_MODE, clavepriv);
+                c.init(Cipher.DECRYPT_MODE, claveServer);
                 Usuario p = (Usuario) usu.getObject(c);
                 System.out.println(p);
 
-                bd.actualizarUsuario(p.getId(), p.getCorreo(), p.getClave(), p.getNick(), p.getNombre(), p.getApellido());
+                //bd.actualizarUsuario(p.getId(), p.getCorreo(), p.getClave(), p.getNick(), p.getNombre(), p.getApellido());
 
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-
         }
 
     }
 
     private synchronized void iniciarSesion(PrintStream ps, SecretKey claveServer, RegistrarUsuario mensajeServidor) {
         try {
+            dos = new DataOutputStream(cliente.getOutputStream());
             boolean primeraVez;
             boolean esAdmin;
             boolean esActivado;
@@ -181,25 +179,32 @@ public class HiloServidor extends Thread {
                 boolean valido = MessageDigest.isEqual(resumen1, resumen2);
                 if (valido) {
                     System.out.println("Las claves son iguales");
-                    ps.println("");
-                    ps.println("Encontrado");
-                    ps.println("" + usuario.getId());
+                    //ps.println("");
+                    //oos.writeUTF("");
+                    //ps.println("Encontrado");
+                    dos.writeUTF("Encontrado");
+                    //ps.println("" + usuario.getId());
+                    dos.writeUTF(""+usuario.getId());
 
                     if (esActivado) {
                         System.out.println("El usuario esta activado");
-                        ps.println("activado");
+                        //ps.println("activado");
+                        dos.writeUTF("activado");
                         if (!primeraVez) {
                             bd.cerrarConexion();
                             System.out.println("No es su primera vez");
+                            dos.writeUTF("no primera");
                             ListaUsuarios amigos = new ListaUsuarios(listaAmigos);
-                            //oos.writeObject(amigos);
-                            ps.println("no primera");
+                            oos.writeObject(amigos);
+                            //ps.println("no primera");
+                            
 
                         }
 
                         if (primeraVez) {
                             System.out.println("Es su primera vez");
-                            ps.println("primera");
+                            //ps.println("primera");
+                            dos.writeUTF("primera");
                             bd.actualizarPrimeraVez(usuario.getId());
                             bd.cerrarConexion();
                         }
@@ -207,30 +212,38 @@ public class HiloServidor extends Thread {
 
                     if (!esActivado) {
                         System.out.println("El usuario no esta activado");
-                        ps.println("no activado");
-                        ps.println("");
+                        //ps.println("no activado");
+                        dos.writeUTF("no activado");
+                        //ps.println("");
+                        dos.writeUTF("");
                     }
 
                     if (!esAdmin) {
                         System.out.println("Es un usuario normal");
-                        ps.println("normal");
+                        //ps.println("normal");
+                        dos.writeUTF("normal");
                     }
 
                     if (esAdmin) {
                         System.out.println("Es un admin");
-                        ps.println("admin");
+                        //ps.println("admin");
+                        dos.writeUTF("admin");
                     }
 
                 } else {
                     System.out.println("Las claves no son iguales");
-                    ps.println("");
-                    ps.println("No encontrado");
+                    //ps.println("");
+                    dos.writeUTF("");
+                    //ps.println("No encontrado");
+                    dos.writeUTF("No encontrado");
                 }
 
             } else {
                 System.out.println("No se ha encontrado el usuario");
-                ps.println("");
-                ps.println("No encontrado");
+                //ps.println("");
+                dos.writeUTF("");
+                //ps.println("No encontrado");
+                dos.writeUTF("No encontrado");
             }
         } catch (Exception e) {
             e.printStackTrace();

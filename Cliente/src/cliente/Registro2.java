@@ -222,6 +222,9 @@ public class Registro2 extends javax.swing.JFrame {
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String registro = "Registro";
+            DataInputStream datos = new DataInputStream(server.getInputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
+            
             RegistrarUsuario registrarse = new RegistrarUsuario();
             String usuario = txtUsuarioRegistro.getText().toString();
             String clave = pwdContrasenaRegistro.getText().toString();
@@ -256,8 +259,10 @@ public class Registro2 extends javax.swing.JFrame {
             
             registrarse.setClaveSimetrica(claveSimetrica);
 
-            ps.println("");
-            ps.println(registro);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(registro);
+            dos.writeUTF(registro);
 
             oos.writeObject(registrarse);
 

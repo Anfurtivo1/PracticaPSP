@@ -5,9 +5,11 @@
  */
 package cliente;
 
+import IniciarSesion.RegistrarUsuario;
 import basedatos.Usuario;
 import Utilidades.Seguridad;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -17,7 +19,9 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
 
 /**
  *
@@ -230,26 +234,29 @@ public class EditarUsuario extends javax.swing.JFrame {
         Usuario usu = new Usuario(idUsuario,correo,claveResumida,nick,nombre,apellidos);
         
         try {
-            KeyPairGenerator KeyGen = KeyPairGenerator.getInstance("RSA");
-            KeyGen.initialize(2048);
-            KeyPair par = KeyGen.generateKeyPair();
-            PrivateKey clavepriv = par.getPrivate();
-            PublicKey clavepubl = par.getPublic();
+            KeyGenerator kg = KeyGenerator.getInstance("AES");
+            kg.init(128);
+            SecretKey claveSimetrica = kg.generateKey();
             ip = InetAddress.getLocalHost();
             server = new Socket(ip, 1234);
             ObjectOutputStream oos = new ObjectOutputStream(server.getOutputStream());
             DataInputStream datos = new DataInputStream(server.getInputStream());
+            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String editarUsuario = "editarUsuario";
             String respuesta;
             
-            ps.println("");
-            ps.println(editarUsuario);
+            //ps.println("");
+            dos.writeUTF("");
+            //ps.println(editarUsuario);
+            dos.writeUTF(editarUsuario);
 
-            oos.writeObject(clavepubl);
+            RegistrarUsuario mensaje = new RegistrarUsuario();
+            mensaje.setClaveSimetrica(claveSimetrica);
+            oos.writeObject(mensaje);
             
-            Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            c.init(Cipher.ENCRYPT_MODE, clavepubl);
+            Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            c.init(Cipher.ENCRYPT_MODE, claveSimetrica);
             //Creamos un objeto encapsulado con el cipher creado anteriormente y el objeto que queremos encapsular (tiene que implementar serializable)
             SealedObject sealedObject = new SealedObject(usu, c);
 
