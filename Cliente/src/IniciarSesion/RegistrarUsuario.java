@@ -39,6 +39,7 @@ public class RegistrarUsuario implements Serializable {
     }
     
     
+    
 
     public RegistrarUsuario(byte[] correoCifrado, byte[] claveCifrada) {
         this.correoCifrado = correoCifrado;

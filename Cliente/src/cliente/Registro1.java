@@ -19,6 +19,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
@@ -39,6 +41,7 @@ public class Registro1 extends javax.swing.JFrame {
     private String id;
     private String admin;
     private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
 
     /**
      * Creates new form Registro1
@@ -46,14 +49,15 @@ public class Registro1 extends javax.swing.JFrame {
     public Registro1() {
         initComponents();
     }
-    
+
     /**
      * Creates new form Registro1
      */
-    public Registro1(String id, String admin, ListaUsuarios amigos) {
+    public Registro1(String id, String admin, ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
         this.id = id;
         this.admin = admin;
         this.amigos = amigos;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
         initComponents();
     }
 
@@ -258,7 +262,7 @@ public class Registro1 extends javax.swing.JFrame {
             String nombre = txtNombreRegistro.getText().toString();
             String apellido = txtApellidoRegistro.getText().toString();
             int rol = (int) spRol.getValue();
-            String rolS = ""+rol;
+            String rolS = "" + rol;
             byte[] foto;
             byte[] usuarioCifrado;
             byte[] claveResumida = s.resumirMensaje(clave);
@@ -298,7 +302,7 @@ public class Registro1 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAceptarRegistroActionPerformed
 
     private void btnVolverRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverRegistroActionPerformed
-        PantallaPrincipal p = new PantallaPrincipal(id,admin,amigos);
+        PantallaPrincipal p = new PantallaPrincipal(id, admin, amigos, usuariosMismasPrefs);
         p.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverRegistroActionPerformed
@@ -330,9 +334,11 @@ public class Registro1 extends javax.swing.JFrame {
 
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fc.getSelectedFile();
+
             String origen = archivo.getPath();
             ImageIcon icon = new ImageIcon(new ImageIcon(origen).getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
             try {
+                
                 DataInputStream dis = new DataInputStream(new FileInputStream(archivo));
                 imagen = new byte[(int) archivo.length()];
                 dis.readFully(imagen);

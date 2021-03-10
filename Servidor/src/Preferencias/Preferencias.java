@@ -41,6 +41,18 @@ public class Preferencias implements Serializable{
         this.interesMujer = interesMujer;
         this.interesAmbos = interesAmbos;
     }
+    
+    public Preferencias(int idUsuario, boolean relacionSeria, int deportivo, int artistico, int politico, boolean tieneHijos, boolean quiereHijos, boolean interesHombre, boolean interesMujer) {
+        this.idUsuario = idUsuario;
+        this.relacionSeria = relacionSeria;
+        this.deportivo = deportivo;
+        this.artistico = artistico;
+        this.politico = politico;
+        this.tieneHijos = tieneHijos;
+        this.quiereHijos = quiereHijos;
+        this.interesHombre = interesHombre;
+        this.interesMujer = interesMujer;
+    }
 
     public int getIdUsuario() {
         return idUsuario;

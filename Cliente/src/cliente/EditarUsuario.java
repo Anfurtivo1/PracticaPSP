@@ -35,6 +35,7 @@ public class EditarUsuario extends javax.swing.JFrame {
     private InetAddress ip;
     private ListaUsuarios amigos;
     private String admin;
+    private ListaUsuarios usuariosMismasPrefs;
     /**
      * Creates new form EditarUsuario
      */
@@ -63,10 +64,11 @@ public class EditarUsuario extends javax.swing.JFrame {
        /**
      * Creates new form EditarUsuario
      */
-    public EditarUsuario(String id,String admin,ListaUsuarios amigos) {
+    public EditarUsuario(String id,String admin,ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
         this.id = id;
         this.admin = admin;
         this.amigos = amigos;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
         initComponents();
     }
     
@@ -226,13 +228,13 @@ public class EditarUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos);
+        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnEditarPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPreferenciasActionPerformed
-        EditarPreferencias v = new EditarPreferencias(id,admin,amigos);
+        EditarPreferencias v = new EditarPreferencias(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPreferenciasActionPerformed

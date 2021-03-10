@@ -37,6 +37,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     private InetAddress ip;
     private String admin;
     private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
 
     /**
      * Creates new form EditarPreferencias
@@ -65,10 +66,11 @@ public class EditarPreferencias extends javax.swing.JFrame {
     /**
      * Creates new form EditarPreferencias
      */
-    public EditarPreferencias(String id,String admin,ListaUsuarios amigos) {
+    public EditarPreferencias(String id,String admin,ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
         this.id = id;
         this.amigos = amigos;
         this.admin = admin;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
         initComponents();
     }
     
@@ -207,7 +209,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos);
+        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed

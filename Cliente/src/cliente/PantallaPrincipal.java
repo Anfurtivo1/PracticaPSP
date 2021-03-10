@@ -7,10 +7,21 @@ package cliente;
 
 import Utilidades.EnviarMensaje;
 import basedatos.ListaUsuarios;
+import basedatos.Usuario;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.ListModel;
 
 /**
  *
@@ -21,6 +32,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private String id;
     private String admin;
     private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
+    private JButton btnAnadirAmigos;
+    private DefaultListModel nicks;
+    private DefaultListModel nicksUsuariosPrefs;
 
     /**
      * Creates new form PantallaPrincipal
@@ -45,22 +60,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form PantallaPrincipal
      */
-    public PantallaPrincipal(String id, String admin, ListaUsuarios amigos) {
+    public PantallaPrincipal(String id, String admin, ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
         this.id = id;
         this.admin = admin;
         this.amigos = amigos;
-        Map<Integer, String> mapaAmigos = new HashMap<Integer, String>();
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
 
-        for (int i = 0; i < amigos.getListaAmigos().size(); i++) {
-            //Map<String, Integer>.put(mapaAmigos.get(nick), mapaAmigos.get(id));
-            //lsAmigos.setModel(mapaAmigos.getkeys());
+        Map<String, Integer> mapaAmigos = new HashMap<String, Integer>();
+        nicks = new DefaultListModel();
+        for (Usuario amigo : amigos.getListaAmigos()) {
+            mapaAmigos.put(amigo.getNick(), amigo.getId());
+            nicks.addElement(amigo.getNick());
+        }
+
+        Map<String, Integer> mapausuariosPrefs = new HashMap<String, Integer>();
+        nicksUsuariosPrefs = new DefaultListModel();
+
+        for (Usuario amigo : usuariosMismasPrefs.getListaAmigos()) {
+            mapausuariosPrefs.put(amigo.getNick(), amigo.getId());
+            nicksUsuariosPrefs.addElement(amigo.getNick());
         }
 
         initComponents();
+        lsAmigos.setModel(nicks);
+        lstNuevosUsuarios.setModel(nicksUsuariosPrefs);
         if (admin.equals("normal")) {
             btnAccederCRUD.setVisible(false);
         }
-
     }
 
     /**
@@ -87,6 +113,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         lstNuevosUsuarios = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         lsAmigos = new javax.swing.JList<>();
+        btnEliminarAmigo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -120,6 +147,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabel3.setText("Lista de amigos");
 
         btnEnviarArchivo.setText("Adjuntar archivo");
+        btnEnviarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarArchivoActionPerformed(evt);
+            }
+        });
 
         btnAccederCRUD.setText("Administrar usuarios");
         btnAccederCRUD.addActionListener(new java.awt.event.ActionListener() {
@@ -140,6 +172,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lstNuevosUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstNuevosUsuariosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(lstNuevosUsuarios);
 
         lsAmigos.setModel(new javax.swing.AbstractListModel<String>() {
@@ -153,6 +190,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
         jScrollPane3.setViewportView(lsAmigos);
+
+        btnEliminarAmigo.setText("eliminar amigo");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -181,14 +220,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addComponent(btnEnviarArchivo)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txtMensaje)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEnviarMensaje))
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 729, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(txtMensaje)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEnviarMensaje))
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 729, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(367, 367, 367)
+                        .addComponent(btnEliminarAmigo)))
                 .addGap(93, 93, 93))
         );
         layout.setVerticalGroup(
@@ -213,6 +257,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEliminarAmigo)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -227,13 +273,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPerfilActionPerformed
-        EditarUsuario v = new EditarUsuario(id);
+        EditarUsuario v = new EditarUsuario(id, admin, amigos, usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPerfilActionPerformed
 
     private void btnAccederCRUDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccederCRUDActionPerformed
-        PantallaAdministradores v = new PantallaAdministradores(id, admin,amigos);
+        PantallaAdministradores v = new PantallaAdministradores(id, admin, amigos, usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAccederCRUDActionPerformed
@@ -249,22 +295,48 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void lsAmigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lsAmigosMouseClicked
-         String amigoSeleccionado = String.valueOf(lsAmigos.getSelectedValue());
-         System.out.println(amigoSeleccionado);
+        String amigoSeleccionado = String.valueOf(lsAmigos.getSelectedValue());
+        System.out.println(amigoSeleccionado);
     }//GEN-LAST:event_lsAmigosMouseClicked
 
     private void btnEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarMensajeActionPerformed
-        if (txtMensaje.getText().trim()!="") {
-            EnviarMensaje enviarMensaje = new EnviarMensaje(1,1);
+        if (txtMensaje.getText().trim() != "") {
+            int idUsuario= Integer.parseInt(id);
+            EnviarMensaje enviarMensaje = new EnviarMensaje(idUsuario, 16);
             enviarMensaje.enviarMensaje(txtMensaje.getText());
         }
     }//GEN-LAST:event_btnEnviarMensajeActionPerformed
+
+    private void lstNuevosUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstNuevosUsuariosMouseClicked
+        String nick = (String) lstNuevosUsuarios.getSelectedValue();
+        //Meter base de datos
+        nicks.addElement(nick);
+        nicksUsuariosPrefs.removeElement(nick);
+
+    }//GEN-LAST:event_lstNuevosUsuariosMouseClicked
+
+    private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
+
+        try {
+            JFileChooser fc = new JFileChooser();
+            int valor = fc.showOpenDialog(fc);
+            if (valor == JFileChooser.APPROVE_OPTION) {
+                String ruta = fc.getSelectedFile().getAbsolutePath();
+                byte[] array = Files.readAllBytes(Paths.get(ruta));
+                //Insertar en base de datos
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_btnEnviarArchivoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccederCRUD;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnEditarPerfil;
+    private javax.swing.JButton btnEliminarAmigo;
     private javax.swing.JButton btnEnviarArchivo;
     private javax.swing.JButton btnEnviarMensaje;
     private javax.swing.JLabel jLabel1;

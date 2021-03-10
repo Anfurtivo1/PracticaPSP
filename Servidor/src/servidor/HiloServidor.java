@@ -61,7 +61,7 @@ public class HiloServidor extends Thread {
 
         try {
             datos = new DataInputStream(cliente.getInputStream());
-            
+
             //ps = new PrintStream(cliente.getOutputStream());
             //datos.readLine();
             //accion = datos.readLine();
@@ -75,7 +75,7 @@ public class HiloServidor extends Thread {
                 mensajeServidor = (RegistrarUsuario) ois.readObject();
                 claveServer = mensajeServidor.getClaveSimetrica();
             }
-            
+
             if (accion.equals("enviarMensaje")) {
                 System.out.println("Se ha recibido un mensaje");
                 Mensaje mensajeCliente = (Mensaje) ois.readObject();
@@ -86,7 +86,21 @@ public class HiloServidor extends Thread {
                 byte[] mensajeDescifrado = c.doFinal(mensajeCifrado);
                 String mensaje = new String(mensajeDescifrado);
                 System.out.println(mensaje);
-                
+
+            }
+
+            if (accion.equals("enviarNick")) {
+                System.out.println("Se ha recibido el nick");
+                c = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                c.init(Cipher.DECRYPT_MODE, claveServer);
+                byte[] nickCifrado = mensajeServidor.getNickCifrado();
+                byte[] nickDescifrado = c.doFinal(nickCifrado);
+                String nick = new String(nickDescifrado);
+
+                bd.abrirConexion();
+                int id = bd.buscarPorNick(nick);
+                bd.cerrarConexion();
+
             }
 
             if (accion.equals("activarUsuario")) {
@@ -113,7 +127,7 @@ public class HiloServidor extends Thread {
                 byte[] nickCifrado = mensajeServidor.getNickCifrado();
                 byte[] nickDescifrado = c.doFinal(nickCifrado);
                 String nick = new String(nickDescifrado);
-                
+
                 bd.abrirConexion();
                 int id = bd.buscarPorNick(nick);
                 if (id != -1) {
@@ -156,8 +170,9 @@ public class HiloServidor extends Thread {
                 c.init(Cipher.DECRYPT_MODE, claveServer);
                 Usuario p = (Usuario) usu.getObject(c);
                 System.out.println(p);
-
-                //bd.actualizarUsuario(p.getId(), p.getCorreo(), p.getClave(), p.getNick(), p.getNombre(), p.getApellido());
+                bd.abrirConexion();
+                bd.actualizarUsuario(p.getId(), p.getCorreo(), p.getClave(), p.getNick(), p.getNombre(), p.getApellido());
+                bd.cerrarConexion();
 
             }
 
@@ -174,6 +189,7 @@ public class HiloServidor extends Thread {
             boolean esAdmin;
             boolean esActivado;
             ArrayList<Usuario> listaAmigos;
+            ArrayList<Usuario> usuariosMismasPrefs = new ArrayList<Usuario>();
             Cipher c = Cipher.getInstance("AES/ECB/PKCS5Padding");
             c.init(Cipher.DECRYPT_MODE, claveServer);
             byte[] correoCifrado = mensajeServidor.getCorreo();
@@ -198,7 +214,7 @@ public class HiloServidor extends Thread {
                     //ps.println("Encontrado");
                     dos.writeUTF("Encontrado");
                     //ps.println("" + usuario.getId());
-                    dos.writeUTF(""+usuario.getId());
+                    dos.writeUTF("" + usuario.getId());
 
                     if (esActivado) {
                         System.out.println("El usuario esta activado");
@@ -209,9 +225,15 @@ public class HiloServidor extends Thread {
                             System.out.println("No es su primera vez");
                             dos.writeUTF("no primera");
                             ListaUsuarios amigos = new ListaUsuarios(listaAmigos);
+                            bd.abrirConexion();
+                            Preferencias pref = bd.buscarUsuarioPreferencias(usuario.getId());
+                            usuariosMismasPrefs = bd.comprobarPreferencias(pref);
+                            ListaUsuarios usuariosPrefs = new ListaUsuarios(usuariosMismasPrefs);
+                            bd.cerrarConexion();
+
                             oos.writeObject(amigos);
+                            oos.writeObject(usuariosPrefs);
                             //ps.println("no primera");
-                            
 
                         }
 

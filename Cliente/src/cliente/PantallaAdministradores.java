@@ -17,6 +17,7 @@ public class PantallaAdministradores extends javax.swing.JFrame {
     private String id;
     private String admin;
     private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
     /**
      * Creates new form PantallaAdministradores
      */
@@ -44,10 +45,11 @@ public class PantallaAdministradores extends javax.swing.JFrame {
     /**
      * Creates new form PantallaAdministradores
      */
-    public PantallaAdministradores(String id,String admin,ListaUsuarios amigos) {
+    public PantallaAdministradores(String id,String admin,ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
         this.id = id;
         this.amigos = amigos;
         this.admin = admin;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
         initComponents();
     }
 
@@ -203,19 +205,19 @@ public class PantallaAdministradores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos);
+        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnPantallaAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPantallaAltaActionPerformed
-        Registro1 v = new Registro1(id,admin,amigos);
+        Registro1 v = new Registro1(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnPantallaAltaActionPerformed
 
     private void btnModificacionDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificacionDatosActionPerformed
-        EditarUsuario v = new EditarUsuario(id,admin,amigos);
+        EditarUsuario v = new EditarUsuario(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnModificacionDatosActionPerformed
