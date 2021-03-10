@@ -8,6 +8,7 @@ package cliente;
 import IniciarSesion.RegistrarUsuario;
 import basedatos.Usuario;
 import Utilidades.Seguridad;
+import basedatos.ListaUsuarios;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.ObjectOutputStream;
@@ -32,6 +33,9 @@ public class EditarUsuario extends javax.swing.JFrame {
     private Seguridad s = new Seguridad();
     private Socket server;
     private InetAddress ip;
+    private ListaUsuarios amigos;
+    private String admin;
+    private ListaUsuarios usuariosMismasPrefs;
     /**
      * Creates new form EditarUsuario
      */
@@ -46,6 +50,28 @@ public class EditarUsuario extends javax.swing.JFrame {
         this.id = id;
         initComponents();
     }
+    
+        /**
+     * Creates new form EditarUsuario
+     */
+    public EditarUsuario(String id,ListaUsuarios amigos) {
+        this.id = id;
+        this.amigos = amigos;
+        initComponents();
+    }
+    
+    
+       /**
+     * Creates new form EditarUsuario
+     */
+    public EditarUsuario(String id,String admin,ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
+        this.id = id;
+        this.admin = admin;
+        this.amigos = amigos;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
+        initComponents();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -202,13 +228,13 @@ public class EditarUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,"");
+        PantallaPrincipal v = new PantallaPrincipal(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnEditarPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPreferenciasActionPerformed
-        EditarPreferencias v = new EditarPreferencias(id);
+        EditarPreferencias v = new EditarPreferencias(id,admin,amigos,usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPreferenciasActionPerformed

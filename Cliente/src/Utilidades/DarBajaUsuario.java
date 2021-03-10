@@ -48,7 +48,6 @@ public class DarBajaUsuario {
             DataOutputStream dos = new DataOutputStream(server.getOutputStream());
             PrintStream ps = new PrintStream(server.getOutputStream());
             String baja = "bajaUsuario";
-            String respuesta;
 
             //ps.println("");
             dos.writeUTF("");

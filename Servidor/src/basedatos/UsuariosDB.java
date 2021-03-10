@@ -6,6 +6,8 @@
 package basedatos;
 
 //import Cadena.Cadena;
+import Preferencias.Preferencias;
+import Utilidades.ListaMensajes;
 import static basedatos.Constantes.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -106,6 +108,96 @@ public class UsuariosDB {
         return cod;
     }
 
+    public synchronized int insertarMensajes(int idUsuario1, int idUsuario2, String mensaje) {
+        int cod = 0;
+        String sentencia = "insert into mensajes values(null,?,?,?,null)";
+
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setInt(1, idUsuario1);
+            SentenciaPreparada.setInt(2, idUsuario2);
+            SentenciaPreparada.setString(3, mensaje);
+            SentenciaPreparada.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                SentenciaPreparada.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return cod;
+    }
+
+    public synchronized int eliminarAmigos(int idUsuario, String nick) {
+        int cod = 0;
+        String sentencia = "delete from usuariosgustados where idUsuario1 = ? and IdUsuario2 in (select idUsuarios from usuarios where nick= ?)";
+
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setInt(1, idUsuario);
+            SentenciaPreparada.setString(2, nick);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                SentenciaPreparada.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return cod;
+    }
+
+    public synchronized int agregarAmigos(int idUsuario, String nick) {
+        int cod = 0;
+        String sentencia = "insert into usuariosgustados values(?,(select idUsuarios from usuarios where nick= ?))";
+
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setInt(1, idUsuario);
+            SentenciaPreparada.setString(2, nick);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                SentenciaPreparada.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return cod;
+    }
+
+    public synchronized int insertarArchivo(int idUsuario1, int idUsuario2, byte[] archivo) {
+        int cod = 0;
+
+        String sentencia = "insert into mensajes values(null,?,?,?,?)";
+
+        try {
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setInt(1, idUsuario1);
+            SentenciaPreparada.setInt(2, idUsuario2);
+            SentenciaPreparada.setString(3, "");
+            SentenciaPreparada.setBytes(4, archivo);
+            SentenciaPreparada.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                SentenciaPreparada.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return cod;
+    }
+
     public synchronized int insertarPreferencias(boolean relacionSeria, int deportivo, int artistico,
             int politico, boolean tieneHijos, boolean quiereHijos,
             boolean interesHombre, boolean interesMujer, int id) {
@@ -142,15 +234,21 @@ public class UsuariosDB {
     public synchronized int actualizarUsuario(int id, String correo, byte[] pass, String nick, String nombre, String apellidos) {
         int cod = 0;
 
-        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = '"+correo+"', CLAVE = '"+pass+"', NICK = '"+nick+"', NOMBRE = '"+nombre+"', APELLIDOS = '"+apellidos+"' WHERE IDUSUARIOS=" + id + "";
+        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = ?, CLAVE = ?, NICK = ?, NOMBRE = ?, APELLIDOS = ? WHERE IDUSUARIOS=" + id;
         try {
-            Sentencia_SQL.executeUpdate(sentencia);
+            SentenciaPreparada = Conex.prepareStatement(sentencia);
+            SentenciaPreparada.setString(1, correo);
+            SentenciaPreparada.setBytes(2, pass);
+            SentenciaPreparada.setString(3, nick);
+            SentenciaPreparada.setString(4, nombre);
+            SentenciaPreparada.setString(5, apellidos);
+            SentenciaPreparada.executeUpdate();
 
         } catch (SQLException e) {
             cod = e.getErrorCode();
         } finally {
             try {
-                Sentencia_SQL.close();
+                SentenciaPreparada.close();
             } catch (SQLException ex) {
                 Logger.getLogger(UsuariosDB.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -172,6 +270,26 @@ public class UsuariosDB {
             System.out.println("Error en: " + ex);
         }
         return primeraVez;
+    }
+
+    public synchronized ListaMensajes recuperarMensajes(int idUsuario) {
+        ArrayList<String>lista = new ArrayList<String>();
+        ListaMensajes mensajes = new ListaMensajes(lista);
+        
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            String sentencia = "select mensajeEscrito from mensajes where idUsuario2 = " + idUsuario;
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+            while (Conj_Registros.next()) {
+                String mensaje = Conj_Registros.getString("MensajeEscrito");
+                mensajes.getMensajes().add(mensaje);
+            }
+            return mensajes;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mensajes;
     }
 
     public synchronized void actualizarPrimeraVez(int id) {
@@ -206,7 +324,7 @@ public class UsuariosDB {
         int id = -1;
         try {
             Sentencia_SQL = Conex.createStatement();
-            String sentencia = "Select idUsuarios from usuarios where usuarios.Nick = '" + nick+"'";
+            String sentencia = "Select idUsuarios from usuarios where usuarios.Nick = '" + nick + "'";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             if (Conj_Registros.next()) {
                 id = Conj_Registros.getInt("idUsuarios");
@@ -253,7 +371,6 @@ public class UsuariosDB {
 
     public synchronized ArrayList<Usuario> buscarAmigos(int id) {
         ArrayList lp = new ArrayList<Usuario>();
-        boolean activado = false;
         try {
             Sentencia_SQL = Conex.createStatement();
             String Sentencia = "select idusuarios,nick from usuarios where idusuarios in (select idusuario1 from usuariosgustados where idusuario2=" + id + " and idusuario1 in (select idUsuario2 from usuariosgustados where idUsuario1 = " + id + "));";
@@ -268,6 +385,55 @@ public class UsuariosDB {
             System.out.println("Error en: " + ex);
         }
         return lp;
+    }
+
+    public synchronized ArrayList<Usuario> comprobarPreferencias(Preferencias pref) {
+        ArrayList lp = new ArrayList<Usuario>();
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            String sentencia = "select idusuarios,nick from usuarios where idusuarios in (select idUsuario from preferencias where "
+                    + "idUsuario!= " + pref.getIdUsuario()
+                    + " and relacionSeria= " + pref.isRelacionSeria()
+                    + " and quiereHijos= " + pref.isQuiereHijos()
+                    + " and interesMujer= " + pref.isInteresMujer()
+                    + " and interesHombre = " + pref.isInteresHombre()
+                    + " and Deportivos >=25"
+                    + " and Artistico>=25"
+                    + " and Politico>=25);";
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                Usuario usuario = new Usuario(Conj_Registros.getInt("idUsuarios"), Conj_Registros.getString("Nick"));
+                lp.add(usuario);
+            }
+            return lp;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lp;
+    }
+
+    public synchronized Preferencias buscarUsuarioPreferencias(int idUsuario) {
+        Preferencias prefs = null;
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            //String Sentencia = "SELECT Correo FROM " + TablaUsuarios + " where Correo = '"+ correo +"' and Clave ='"+pass+"'";
+            String Sentencia = "select * from preferencias where idUsuario = " + idUsuario;
+            Conj_Registros = Sentencia_SQL.executeQuery(Sentencia);
+            if (Conj_Registros.next()) {
+                prefs = new Preferencias(Conj_Registros.getInt("idUsuario"), Conj_Registros.getBoolean("relacionSeria"),
+                        Conj_Registros.getInt("Deportivos"), Conj_Registros.getInt("Artistico"),
+                        Conj_Registros.getInt("Politico"), Conj_Registros.getBoolean("tieneHijos"),
+                        Conj_Registros.getBoolean("quiereHijos"), Conj_Registros.getBoolean("interesMujer"),
+                        Conj_Registros.getBoolean("interesHombre"));
+                return prefs;
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("No se ha encontrado el usuario buscado: " + ex);
+        }
+        return prefs;
     }
 
 }

@@ -5,8 +5,27 @@
  */
 package cliente;
 
+import Utilidades.EnviarArchivo;
+import Utilidades.EnviarMensaje;
+import Utilidades.EnviarNick;
+import Utilidades.ListaMensajes;
+import Utilidades.RecuperarMensajes;
+import basedatos.ListaUsuarios;
+import basedatos.Usuario;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.ListModel;
 
 /**
  *
@@ -16,6 +35,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private String id;
     private String admin;
+    private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
+    private JButton btnAnadirAmigos;
+    private DefaultListModel nicks;
+    private DefaultListModel nicksUsuariosPrefs;
 
     /**
      * Creates new form PantallaPrincipal
@@ -35,6 +59,38 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             btnAccederCRUD.setVisible(false);
         }
 
+    }
+
+    /**
+     * Creates new form PantallaPrincipal
+     */
+    public PantallaPrincipal(String id, String admin, ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
+        this.id = id;
+        this.admin = admin;
+        this.amigos = amigos;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
+
+        Map<String, Integer> mapaAmigos = new HashMap<String, Integer>();
+        nicks = new DefaultListModel();
+        for (Usuario amigo : amigos.getListaAmigos()) {
+            mapaAmigos.put(amigo.getNick(), amigo.getId());
+            nicks.addElement(amigo.getNick());
+        }
+
+        Map<String, Integer> mapausuariosPrefs = new HashMap<String, Integer>();
+        nicksUsuariosPrefs = new DefaultListModel();
+
+        for (Usuario amigo : usuariosMismasPrefs.getListaAmigos()) {
+            mapausuariosPrefs.put(amigo.getNick(), amigo.getId());
+            nicksUsuariosPrefs.addElement(amigo.getNick());
+        }
+
+        initComponents();
+        lsAmigos.setModel(nicks);
+        lstNuevosUsuarios.setModel(nicksUsuariosPrefs);
+        if (admin.equals("normal")) {
+            btnAccederCRUD.setVisible(false);
+        }
     }
 
     /**
@@ -61,6 +117,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         lstNuevosUsuarios = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         lsAmigos = new javax.swing.JList<>();
+        btnEliminarAmigo = new javax.swing.JButton();
+        btnAgregarAmigo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -76,6 +134,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabel1.setText("Escribe tu mensaje...");
 
         btnEnviarMensaje.setText("Enviar mensaje");
+        btnEnviarMensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarMensajeActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Nuevos usuarios que te podrían interesar");
 
@@ -89,6 +152,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabel3.setText("Lista de amigos");
 
         btnEnviarArchivo.setText("Adjuntar archivo");
+        btnEnviarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarArchivoActionPerformed(evt);
+            }
+        });
 
         btnAccederCRUD.setText("Administrar usuarios");
         btnAccederCRUD.addActionListener(new java.awt.event.ActionListener() {
@@ -109,6 +177,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lstNuevosUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstNuevosUsuariosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(lstNuevosUsuarios);
 
         lsAmigos.setModel(new javax.swing.AbstractListModel<String>() {
@@ -116,7 +189,26 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lsAmigos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lsAmigosMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(lsAmigos);
+
+        btnEliminarAmigo.setText("eliminar amigo");
+        btnEliminarAmigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarAmigoActionPerformed(evt);
+            }
+        });
+
+        btnAgregarAmigo.setText("Agregar amigo");
+        btnAgregarAmigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarAmigoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -143,16 +235,23 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
-                .addComponent(btnEnviarArchivo)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txtMensaje)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEnviarMensaje))
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 729, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(23, Short.MAX_VALUE)
+                        .addComponent(btnEnviarArchivo)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(txtMensaje)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEnviarMensaje))
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 729, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(btnAgregarAmigo)
+                        .addGap(349, 349, 349)
+                        .addComponent(btnEliminarAmigo)))
                 .addGap(93, 93, 93))
         );
         layout.setVerticalGroup(
@@ -165,9 +264,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                             .addComponent(btnEditarPerfil)
                             .addComponent(btnAccederCRUD))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -177,7 +274,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEliminarAmigo)
+                            .addComponent(btnAgregarAmigo))
                         .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEnviarMensaje)
@@ -191,13 +294,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEditarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPerfilActionPerformed
-        EditarUsuario v = new EditarUsuario(id);
+        EditarUsuario v = new EditarUsuario(id, admin, amigos, usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnEditarPerfilActionPerformed
 
     private void btnAccederCRUDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccederCRUDActionPerformed
-        PantallaAdministradores v = new PantallaAdministradores(id,admin);
+        PantallaAdministradores v = new PantallaAdministradores(id, admin, amigos, usuariosMismasPrefs);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAccederCRUDActionPerformed
@@ -209,21 +312,111 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        try {
-            KeyGenerator kg = KeyGenerator.getInstance("AES");
-            kg.init(128);
-            SecretKey claveSimetrica = kg.generateKey();
-        } catch (Exception e) {
-            e.printStackTrace();
+        ListaMensajes mensajes = new ListaMensajes(null);
+        RecuperarMensajes recuperarMensajes = new RecuperarMensajes();
+        mensajes = recuperarMensajes.recuperarMensajes(id);
+
+        for (int i = 0; i < mensajes.getMensajes().size(); i++) {
+            txaMensajes.append("\n");
+            txaMensajes.append(mensajes.getMensajes().get(i));
         }
 
     }//GEN-LAST:event_formWindowOpened
 
+    private void lsAmigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lsAmigosMouseClicked
+        String amigoSeleccionado = String.valueOf(lsAmigos.getSelectedValue());
+        System.out.println(amigoSeleccionado);
+    }//GEN-LAST:event_lsAmigosMouseClicked
+
+    private void btnEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarMensajeActionPerformed
+        if (txtMensaje.getText().trim() != "") {
+            String nick = (String) lsAmigos.getSelectedValue();
+            int idUsuario1 = Integer.parseInt(id);
+            int idUsuario2 = -1;
+            EnviarNick enviarNick = new EnviarNick();
+            if (lsAmigos.getSelectedIndex() != -1) {
+                idUsuario2 = enviarNick.enviarNick(lsAmigos.getSelectedValue());
+            }
+            if (lstNuevosUsuarios.getSelectedIndex() != -1) {
+                idUsuario2 = enviarNick.enviarNick(lstNuevosUsuarios.getSelectedValue());
+            }
+
+            if (idUsuario2 != -1) {
+                EnviarMensaje enviarMensaje = new EnviarMensaje(idUsuario1, idUsuario2);
+                enviarMensaje.enviarMensaje(txtMensaje.getText());
+            }
+
+        }
+    }//GEN-LAST:event_btnEnviarMensajeActionPerformed
+
+    private void lstNuevosUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstNuevosUsuariosMouseClicked
+
+
+    }//GEN-LAST:event_lstNuevosUsuariosMouseClicked
+
+    private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
+
+        try {
+            JFileChooser fc = new JFileChooser();
+            int valor = fc.showOpenDialog(fc);
+            if (valor == JFileChooser.APPROVE_OPTION) {
+                String ruta = fc.getSelectedFile().getAbsolutePath();
+                byte[] array = Files.readAllBytes(Paths.get(ruta));
+
+                EnviarArchivo enviarArchivo = new EnviarArchivo();
+                int idUsuario1 = Integer.parseInt(id);
+                int idUsuario2 = -1;
+                EnviarNick enviarNick = new EnviarNick();
+                if (lsAmigos.getSelectedIndex() != -1) {
+                    idUsuario2 = enviarNick.enviarNick(lsAmigos.getSelectedValue());
+                }
+                if (lstNuevosUsuarios.getSelectedIndex() != -1) {
+                    idUsuario2 = enviarNick.enviarNick(lstNuevosUsuarios.getSelectedValue());
+                }
+
+                if (idUsuario2 != -1) {
+                    enviarArchivo.enviarArchivo(array,idUsuario1,idUsuario2);
+                }
+                
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_btnEnviarArchivoActionPerformed
+
+    private void btnEliminarAmigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAmigoActionPerformed
+        if (lsAmigos.getSelectedIndex() != -1) {
+            //Insertar conexion base de datos
+            //EnviarNick enviarNick = new EnviarNick();
+            //enviarNick.enviarNick(nick);
+            String nick = (String) lsAmigos.getSelectedValue();
+            nicks.removeElement(nick);
+        }
+    }//GEN-LAST:event_btnEliminarAmigoActionPerformed
+
+    private void btnAgregarAmigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAmigoActionPerformed
+
+        if (lstNuevosUsuarios.getSelectedIndex() != -1) {
+            String nick = (String) lstNuevosUsuarios.getSelectedValue();
+            //Insertar conexion base de datos
+            //EnviarNick enviarNick = new EnviarNick();
+            //enviarNick.enviarNick(nick);
+            nicks.addElement(nick);
+            nicksUsuariosPrefs.removeElement(nick);
+        }
+
+    }//GEN-LAST:event_btnAgregarAmigoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAccederCRUD;
+    private javax.swing.JButton btnAgregarAmigo;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnEditarPerfil;
+    private javax.swing.JButton btnEliminarAmigo;
     private javax.swing.JButton btnEnviarArchivo;
     private javax.swing.JButton btnEnviarMensaje;
     private javax.swing.JLabel jLabel1;

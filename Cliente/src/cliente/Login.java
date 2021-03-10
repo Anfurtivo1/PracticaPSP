@@ -6,6 +6,7 @@
 package cliente;
 
 import IniciarSesion.RegistrarUsuario;
+import Preferencias.Preferencias;
 import Utilidades.Seguridad;
 import basedatos.ListaUsuarios;
 import java.io.DataInputStream;
@@ -180,7 +181,9 @@ public class Login extends javax.swing.JFrame {
             String primeraVez = datos.readUTF();
             System.out.println(primeraVez);
             ListaUsuarios amigos;
+            ListaUsuarios usuariosMismasPrefs;
             amigos=(ListaUsuarios) ois.readObject();
+            usuariosMismasPrefs = (ListaUsuarios)ois.readObject();
             //String esAdmin = datos.readLine();
             String esAdmin = datos.readUTF();
             System.out.println(esAdmin);
@@ -194,7 +197,7 @@ public class Login extends javax.swing.JFrame {
                         this.setVisible(false);
                     } else {
 
-                        PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
+                        PantallaPrincipal v = new PantallaPrincipal(id, esAdmin,amigos,usuariosMismasPrefs);
                         v.setVisible(true);
                         this.setVisible(false);
                     }

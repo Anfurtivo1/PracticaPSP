@@ -7,6 +7,7 @@ package cliente;
 
 import IniciarSesion.RegistrarUsuario;
 import Utilidades.Seguridad;
+import basedatos.ListaUsuarios;
 import java.awt.Image;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,6 +19,8 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
@@ -35,11 +38,26 @@ public class Registro1 extends javax.swing.JFrame {
     private Socket server;
     private InetAddress ip;
     private byte[] imagen;
+    private String id;
+    private String admin;
+    private ListaUsuarios amigos;
+    private ListaUsuarios usuariosMismasPrefs;
 
     /**
      * Creates new form Registro1
      */
     public Registro1() {
+        initComponents();
+    }
+
+    /**
+     * Creates new form Registro1
+     */
+    public Registro1(String id, String admin, ListaUsuarios amigos, ListaUsuarios usuariosMismasPrefs) {
+        this.id = id;
+        this.admin = admin;
+        this.amigos = amigos;
+        this.usuariosMismasPrefs = usuariosMismasPrefs;
         initComponents();
     }
 
@@ -244,7 +262,7 @@ public class Registro1 extends javax.swing.JFrame {
             String nombre = txtNombreRegistro.getText().toString();
             String apellido = txtApellidoRegistro.getText().toString();
             int rol = (int) spRol.getValue();
-            String rolS = ""+rol;
+            String rolS = "" + rol;
             byte[] foto;
             byte[] usuarioCifrado;
             byte[] claveResumida = s.resumirMensaje(clave);
@@ -284,7 +302,7 @@ public class Registro1 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAceptarRegistroActionPerformed
 
     private void btnVolverRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverRegistroActionPerformed
-        Login p = new Login();
+        PantallaPrincipal p = new PantallaPrincipal(id, admin, amigos, usuariosMismasPrefs);
         p.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverRegistroActionPerformed
@@ -316,9 +334,11 @@ public class Registro1 extends javax.swing.JFrame {
 
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fc.getSelectedFile();
+
             String origen = archivo.getPath();
             ImageIcon icon = new ImageIcon(new ImageIcon(origen).getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
             try {
+                
                 DataInputStream dis = new DataInputStream(new FileInputStream(archivo));
                 imagen = new byte[(int) archivo.length()];
                 dis.readFully(imagen);
@@ -332,40 +352,6 @@ public class Registro1 extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnElegirImagenActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Registro1().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptarRegistro;
