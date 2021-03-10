@@ -166,7 +166,7 @@ public class HiloServidor extends Thread {
                     if (!primeraVez) {
                         System.out.println("No es su primera vez");
                         ListaUsuarios amigos = new ListaUsuarios(listaAmigos);
-                        oos.writeObject(amigos);
+                        //oos.writeObject(amigos);
                         ps.println("no primera");
 
                     }

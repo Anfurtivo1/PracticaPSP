@@ -181,13 +181,13 @@ public class Login extends javax.swing.JFrame {
                         v.setVisible(true);
                         this.setVisible(false);
                     } else {
-                        ListaUsuarios amigos;
-                        amigos=(ListaUsuarios) ois.readObject();
+                        //ListaUsuarios amigos;
+                        //amigos=(ListaUsuarios) ois.readObject();
                         PantallaPrincipal v = new PantallaPrincipal(id, esAdmin);
                         v.setVisible(true);
                         this.setVisible(false);
                     }
-                }else{
+                } else {
                     System.out.println("Ese usuario no estaba activado");
                 }
 
@@ -202,8 +202,6 @@ public class Login extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 
