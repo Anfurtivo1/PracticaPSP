@@ -5,7 +5,7 @@
  */
 package cliente;
 
-import IniciarSesion.Mensaje;
+import IniciarSesion.RegistrarUsuario;
 import Utilidades.Seguridad;
 import basedatos.ListaUsuarios;
 import java.io.DataInputStream;
@@ -27,6 +27,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -127,7 +128,7 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarSesion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesion1ActionPerformed
-        Mensaje correoContrasena = new Mensaje();
+        RegistrarUsuario correoContrasena = new RegistrarUsuario();
         String correo;
         String clave;
         byte[] claveBytes;
@@ -165,19 +166,19 @@ public class Login extends javax.swing.JFrame {
             datos.readLine();
             respuesta = datos.readLine();
             id = datos.readLine();
-            String activado = datos.readLine();
-            String primeraVez = datos.readLine();
-            String esAdmin = datos.readLine();
             System.out.println(id);
+            String activado = datos.readLine();
             System.out.println(activado);
+            String primeraVez = datos.readLine();
             System.out.println(primeraVez);
+            String esAdmin = datos.readLine();
             System.out.println(esAdmin);
 
             if (respuesta.equals("Encontrado")) {
                 if (activado.equals("activado")) {
                     if (primeraVez.equals("primera")) {
                         System.out.println("Se van a cargar las preferencias del nuevo usuario");
-                        EditarPreferencias v = new EditarPreferencias(id);
+                        EditarPreferencias v = new EditarPreferencias(id,esAdmin);
                         v.setVisible(true);
                         this.setVisible(false);
                     } else {
@@ -188,7 +189,7 @@ public class Login extends javax.swing.JFrame {
                         this.setVisible(false);
                     }
                 } else {
-                    System.out.println("Ese usuario no estaba activado");
+                    JOptionPane.showMessageDialog(rootPane, "El usuario no estaba activado");
                 }
 
             }
@@ -206,7 +207,7 @@ public class Login extends javax.swing.JFrame {
         }
 
         //byte[] mensajeResumido=s.resumirMensaje(claveBytes);
-        //correoContrasena = new Mensaje(correo,claveCifrada);
+        //correoContrasena = new RegistrarUsuario(correo,claveCifrada);
 
     }//GEN-LAST:event_btnIniciarSesion1ActionPerformed
 

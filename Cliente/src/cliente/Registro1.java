@@ -9,7 +9,6 @@ import IniciarSesion.RegistrarUsuario;
 import Utilidades.Seguridad;
 import java.awt.Image;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,23 +23,22 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author anfur
  */
-public class Registro2 extends javax.swing.JFrame {
+public class Registro1 extends javax.swing.JFrame {
 
     private Seguridad s = new Seguridad();
     private Socket server;
     private InetAddress ip;
-    private byte[]imagen;
+    private byte[] imagen;
 
     /**
-     * Creates new form Registro2
+     * Creates new form Registro1
      */
-    public Registro2() {
+    public Registro1() {
         initComponents();
     }
 
@@ -69,6 +67,8 @@ public class Registro2 extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         btnElegirImagen = new javax.swing.JButton();
         lblImagen = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        spRol = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -111,6 +111,10 @@ public class Registro2 extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setText("Rol");
+
+        spRol.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1, 1));
+
         javax.swing.GroupLayout pnlRegistrarseLayout = new javax.swing.GroupLayout(pnlRegistrarse);
         pnlRegistrarse.setLayout(pnlRegistrarseLayout);
         pnlRegistrarseLayout.setHorizontalGroup(
@@ -118,6 +122,11 @@ public class Registro2 extends javax.swing.JFrame {
             .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                 .addGap(81, 81, 81)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRegistrarseLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(87, 87, 87)
+                        .addComponent(spRol, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                         .addComponent(btnAceptarRegistro)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -148,7 +157,7 @@ public class Registro2 extends javax.swing.JFrame {
                                         .addComponent(txtNombreRegistro))))
                             .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                                 .addComponent(jLabel7)
-                                .addGap(81, 81, 81)
+                                .addGap(66, 66, 66)
                                 .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
@@ -183,8 +192,12 @@ public class Registro2 extends javax.swing.JFrame {
                         .addComponent(jLabel7))
                     .addGroup(pnlRegistrarseLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                        .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(spRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
                 .addGroup(pnlRegistrarseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAceptarRegistro)
                     .addComponent(btnElegirImagen)
@@ -228,9 +241,9 @@ public class Registro2 extends javax.swing.JFrame {
             String nick = txtNickRegistro.getText().toString();
             String nombre = txtNombreRegistro.getText().toString();
             String apellido = txtApellidoRegistro.getText().toString();
-            String rol = "0";
+            int rol = (int) spRol.getValue();
+            String rolS = ""+rol;
             byte[] foto;
-
             byte[] usuarioCifrado;
             byte[] claveResumida = s.resumirMensaje(clave);
             byte[] nickCifrado;
@@ -243,7 +256,7 @@ public class Registro2 extends javax.swing.JFrame {
             usuarioCifrado = s.cifrarMensaje(usuario, claveSimetrica);
             nombreCifrado = s.cifrarMensaje(nombre, claveSimetrica);
             apellidosCifrado = s.cifrarMensaje(apellido, claveSimetrica);
-            rolCifrado = s.cifrarMensaje(rol, claveSimetrica);
+            rolCifrado = s.cifrarMensaje(rolS, claveSimetrica);
             //fotoCifrada = s.cifrarMensaje(foto, claveSimetrica);
 
             registrarse.setCorreo(usuarioCifrado);
@@ -253,7 +266,7 @@ public class Registro2 extends javax.swing.JFrame {
             registrarse.setApellidoCifrado(apellidosCifrado);
             registrarse.setRolCifrado(rolCifrado);
             //registrarse.setFotoCifrada(fotoCifrada);
-            
+
             registrarse.setClaveSimetrica(claveSimetrica);
 
             ps.println("");
@@ -262,6 +275,7 @@ public class Registro2 extends javax.swing.JFrame {
             oos.writeObject(registrarse);
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnAceptarRegistroActionPerformed
 
@@ -278,22 +292,21 @@ public class Registro2 extends javax.swing.JFrame {
     private void btnElegirImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElegirImagenActionPerformed
         JFileChooser fc = new JFileChooser();
 
-//        FileFilter logFilefilter = new FileFilter() {
-//
-//            public boolean accept(File file) {
-//
-//                if (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")) {
-//                    return true;
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public String getDescription() {
-//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//            }
-//        };
-
+        //        FileFilter logFilefilter = new FileFilter() {
+        //
+        //            public boolean accept(File file) {
+        //
+        //                if (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")) {
+        //                    return true;
+        //                }
+        //                return false;
+        //            }
+        //
+        //            @Override
+        //            public String getDescription() {
+        //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //            }
+        //        };
         fc.setDialogTitle("Buscar imagen");
         //fc.setFileFilter(logFilefilter);
 
@@ -310,12 +323,45 @@ public class Registro2 extends javax.swing.JFrame {
             } catch (IOException ex) {
                 Logger.getLogger(Registro2.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             lblImagen.setIcon(icon);
         }
-
     }//GEN-LAST:event_btnElegirImagenActionPerformed
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Registro1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Registro1().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptarRegistro;
@@ -323,6 +369,7 @@ public class Registro2 extends javax.swing.JFrame {
     private javax.swing.JButton btnVolverRegistro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -330,6 +377,7 @@ public class Registro2 extends javax.swing.JFrame {
     private javax.swing.JLabel lblImagen;
     private javax.swing.JPanel pnlRegistrarse;
     private javax.swing.JPasswordField pwdContrasenaRegistro;
+    private javax.swing.JSpinner spRol;
     private javax.swing.JTextField txtApellidoRegistro;
     private javax.swing.JTextField txtNickRegistro;
     private javax.swing.JTextField txtNombreRegistro;

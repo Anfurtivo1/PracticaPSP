@@ -197,7 +197,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditarPerfilActionPerformed
 
     private void btnAccederCRUDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccederCRUDActionPerformed
-        PantallaAdministradores v = new PantallaAdministradores(id);
+        PantallaAdministradores v = new PantallaAdministradores(id,admin);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnAccederCRUDActionPerformed

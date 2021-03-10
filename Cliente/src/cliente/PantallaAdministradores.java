@@ -5,12 +5,16 @@
  */
 package cliente;
 
+import Utilidades.ActivarUsuario;
+import Utilidades.DarBajaUsuario;
+
 /**
  *
  * @author anfur
  */
 public class PantallaAdministradores extends javax.swing.JFrame {
     private String id;
+    private String admin;
     /**
      * Creates new form PantallaAdministradores
      */
@@ -23,6 +27,15 @@ public class PantallaAdministradores extends javax.swing.JFrame {
      */
     public PantallaAdministradores(String id) {
         this.id = id;
+        initComponents();
+    }
+    
+    /**
+     * Creates new form PantallaAdministradores
+     */
+    public PantallaAdministradores(String id,String admin) {
+        this.id = id;
+        this.admin = admin;
         initComponents();
     }
 
@@ -39,11 +52,15 @@ public class PantallaAdministradores extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        btnConfirmar = new javax.swing.JButton();
+        btnConfirmarBaja = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtBajaUsuario = new javax.swing.JTextField();
         btnPantallaAlta = new javax.swing.JButton();
         btnModificacionDatos = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        txtActivarUsuario = new javax.swing.JTextField();
+        btnActivarUsuario = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,13 +77,39 @@ public class PantallaAdministradores extends javax.swing.JFrame {
 
         jLabel3.setText("Modificar datos de un usuario");
 
-        btnConfirmar.setText("Confirmar");
+        btnConfirmarBaja.setText("Confirmar");
+        btnConfirmarBaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarBajaActionPerformed(evt);
+            }
+        });
 
-        jLabel4.setText("Indica su nombre");
+        jLabel4.setText("Indica su nick");
 
         btnPantallaAlta.setText("Ir a pantalla de alta");
+        btnPantallaAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPantallaAltaActionPerformed(evt);
+            }
+        });
 
         btnModificacionDatos.setText("Ir a pantalla de modificación de datos");
+        btnModificacionDatos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificacionDatosActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Activar usuario");
+
+        jLabel6.setText("Indica su nick");
+
+        btnActivarUsuario.setText("Confirmar");
+        btnActivarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActivarUsuarioActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -75,69 +118,113 @@ public class PantallaAdministradores extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(btnPantallaAlta))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(183, 183, 183)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(87, 87, 87)
+                        .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnPantallaAlta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(93, 93, 93)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnConfirmarBaja)
+                                .addGap(46, 46, 46)
+                                .addComponent(btnVolver))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtBajaUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel6)))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(142, 142, 142))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnModificacionDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(65, 65, 65))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(396, 396, 396)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnConfirmar)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(btnVolver)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtActivarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnModificacionDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(69, 69, 69)
+                                .addComponent(jLabel3)
+                                .addGap(77, 77, 77)))
+                        .addGap(16, 16, 16))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(btnActivarUsuario)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1))
-                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
-                        .addComponent(btnPantallaAlta)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnModificacionDatos))
-                .addGap(35, 35, 35)
-                .addComponent(btnConfirmar)
-                .addGap(62, 62, 62)
-                .addComponent(btnVolver)
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(32, 32, 32)
+                        .addComponent(btnPantallaAlta))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(txtBajaUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtActivarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5))
+                        .addGap(32, 32, 32)
+                        .addComponent(btnModificacionDatos)))
+                .addGap(33, 33, 33)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnConfirmarBaja)
+                    .addComponent(btnActivarUsuario)
+                    .addComponent(btnVolver))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,"");
+        PantallaPrincipal v = new PantallaPrincipal(id,admin);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
 
+    private void btnPantallaAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPantallaAltaActionPerformed
+        Registro1 v = new Registro1();
+        v.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnPantallaAltaActionPerformed
+
+    private void btnModificacionDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificacionDatosActionPerformed
+        EditarUsuario v = new EditarUsuario(id);
+        v.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnModificacionDatosActionPerformed
+
+    private void btnConfirmarBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarBajaActionPerformed
+        DarBajaUsuario baja = new DarBajaUsuario();
+        
+        baja.bajaUsuario(txtBajaUsuario.getText());
+    }//GEN-LAST:event_btnConfirmarBajaActionPerformed
+
+    private void btnActivarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarUsuarioActionPerformed
+        ActivarUsuario activar = new ActivarUsuario();
+        
+        activar.activar(txtActivarUsuario.getText());
+    }//GEN-LAST:event_btnActivarUsuarioActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnConfirmar;
+    private javax.swing.JButton btnActivarUsuario;
+    private javax.swing.JButton btnConfirmarBaja;
     private javax.swing.JButton btnModificacionDatos;
     private javax.swing.JButton btnPantallaAlta;
     private javax.swing.JButton btnVolver;
@@ -145,6 +232,9 @@ public class PantallaAdministradores extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JTextField txtActivarUsuario;
+    private javax.swing.JTextField txtBajaUsuario;
     // End of variables declaration//GEN-END:variables
 }

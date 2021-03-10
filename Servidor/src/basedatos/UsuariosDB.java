@@ -90,8 +90,8 @@ public class UsuariosDB {
             SentenciaPreparada.setString(6, apellidos);
             SentenciaPreparada.setBytes(7, foto);
             SentenciaPreparada.setBoolean(8, false);
-            SentenciaPreparada.setInt(9, 0);
-            SentenciaPreparada.setInt(10, 0);
+            SentenciaPreparada.setInt(9, rol);
+            SentenciaPreparada.setInt(10, 1);
             SentenciaPreparada.executeUpdate();
         } catch (SQLException ex) {
             cod = ex.getErrorCode();
@@ -139,10 +139,10 @@ public class UsuariosDB {
         return cod;
     }
 
-    public synchronized int actualizarUsuario(int id,String correo, byte[] pass, String nick, String nombre, String apellidos) {
+    public synchronized int actualizarUsuario(int id, String correo, byte[] pass, String nick, String nombre, String apellidos) {
         int cod = 0;
 
-        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = (?), SET CLAVE = (?), SET NICK = (?), SET NOMBRE = (?), SET APELLIDOS = (?) WHERE IDUSUARIOS="+id+"";
+        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET CORREO = (?), SET CLAVE = (?), SET NICK = (?), SET NOMBRE = (?), SET APELLIDOS = (?) WHERE IDUSUARIOS=" + id + "";
         try {
             SentenciaPreparada = Conex.prepareStatement(sentencia);
             SentenciaPreparada.setString(1, correo);
@@ -179,15 +179,50 @@ public class UsuariosDB {
         }
         return primeraVez;
     }
-    
-    public synchronized void actualizarPrimeraVez(int id){
-        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET PRIMERAVEZ = 0 WHERE IDUSUARIOS = "+id;
+
+    public synchronized void actualizarPrimeraVez(int id) {
+        String sentencia = "UPDATE " + Constantes.TablaUsuarios + " SET PRIMERAVEZ = 0 WHERE IDUSUARIOS = " + id;
         try {
-            
             Sentencia_SQL.executeUpdate(sentencia);
         } catch (Exception e) {
+            e.printStackTrace();
         }
-            
+
+    }
+
+    public synchronized void darBajaUsuario(int id) {
+        String sentencia = "DELETE FROM USUARIOS WHERE USUARIOS.idUsuarios = " + id;
+        try {
+            Sentencia_SQL.executeUpdate(sentencia);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void activarUsuario(int id) {
+        String sentencia = "UPDATE USUARIOS SET activado = 1 WHERE USUARIOS.idUsuarios = " + id;
+        try {
+            Sentencia_SQL.executeUpdate(sentencia);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized int buscarPorNick(String nick) {
+        int id = -1;
+        try {
+            Sentencia_SQL = Conex.createStatement();
+            String sentencia = "Select idUsuarios from usuarios where usuarios.Nick = '" + nick+"'";
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+            if (Conj_Registros.next()) {
+                id = Conj_Registros.getInt("idUsuarios");
+                return id;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return id;
     }
 
     public synchronized boolean esAdmin(int id) {
@@ -205,7 +240,7 @@ public class UsuariosDB {
         }
         return esAdmin;
     }
-    
+
     public synchronized boolean esActivado(int id) {
         boolean activado = false;
         try {
@@ -221,19 +256,19 @@ public class UsuariosDB {
         }
         return activado;
     }
-    
+
     public synchronized ArrayList<Usuario> buscarAmigos(int id) {
         ArrayList lp = new ArrayList<Usuario>();
         boolean activado = false;
         try {
             Sentencia_SQL = Conex.createStatement();
-            String Sentencia = "select idusuarios,nick from usuarios where idusuarios in (select idusuario1 from usuariosgustados where idusuario2="+id+" and idusuario1 in (select idUsuario2 from usuariosgustados where idUsuario1 = "+id+"));";
+            String Sentencia = "select idusuarios,nick from usuarios where idusuarios in (select idusuario1 from usuariosgustados where idusuario2=" + id + " and idusuario1 in (select idUsuario2 from usuariosgustados where idUsuario1 = " + id + "));";
             Conj_Registros = Sentencia_SQL.executeQuery(Sentencia);
             while (Conj_Registros.next()) {
-                Usuario usuario = new Usuario(Conj_Registros.getInt("idUsuarios"),Conj_Registros.getString("Nick"));
+                Usuario usuario = new Usuario(Conj_Registros.getInt("idUsuarios"), Conj_Registros.getString("Nick"));
                 lp.add(usuario);
             }
-            
+
             return lp;
         } catch (SQLException ex) {
             System.out.println("Error en: " + ex);

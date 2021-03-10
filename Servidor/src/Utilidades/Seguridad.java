@@ -5,7 +5,7 @@
  */
 package Utilidades;
 
-import IniciarSesion.Mensaje;
+import IniciarSesion.RegistrarUsuario;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -5,7 +5,7 @@
  */
 package cliente;
 
-import IniciarSesion.Mensaje;
+import IniciarSesion.RegistrarUsuario;
 import Preferencias.Preferencias;
 import Utilidades.Seguridad;
 import java.io.DataInputStream;
@@ -33,6 +33,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     private Seguridad s = new Seguridad();
     private Socket server;
     private InetAddress ip;
+    private String admin;
 
     /**
      * Creates new form EditarPreferencias
@@ -46,6 +47,15 @@ public class EditarPreferencias extends javax.swing.JFrame {
      */
     public EditarPreferencias(String id) {
         this.id = id;
+        initComponents();
+    }
+    
+    /**
+     * Creates new form EditarPreferencias
+     */
+    public EditarPreferencias(String id,String admin) {
+        this.id = id;
+        this.admin = admin;
         initComponents();
     }
 
@@ -182,7 +192,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal v = new PantallaPrincipal(id,"");
+        PantallaPrincipal v = new PantallaPrincipal(id,admin);
         v.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnVolverActionPerformed
@@ -254,7 +264,7 @@ public class EditarPreferencias extends javax.swing.JFrame {
 
             ps.println("");
             ps.println(editarPreferencias);
-            Mensaje mensaje = new Mensaje();
+            RegistrarUsuario mensaje = new RegistrarUsuario();
             mensaje.setClaveSimetrica(claveSimetrica);
 
             oos.writeObject(mensaje);

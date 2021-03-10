@@ -12,32 +12,40 @@ import javax.crypto.SecretKey;
  *
  * @author anfur
  */
-public class Mensaje implements Serializable {
-
+public class RegistrarUsuario implements Serializable {
+    private byte[]idCifrado;
     private byte[] correoCifrado;
     private byte[] nickCifrado;
     private byte[] nombreCifrado;
     private byte[] apellidoCifrado;
     private byte[] fotoCifrada;
     private byte[] claveResumida;
+    private byte[] rolCifrado;
     private SecretKey claveSimetrica;
 
-    public Mensaje(byte[] correo, byte[] nickCifrado, byte[] nombreCifrado, byte[] apellidoCifrado, byte[] fotoCifrada, byte[] claveResumida, SecretKey claveSimetrica) {
+    public RegistrarUsuario(byte[] correo, byte[] nickCifrado, byte[] nombreCifrado, byte[] apellidoCifrado, byte[] fotoCifrada, byte[] claveResumida,byte[] rolCifrado, SecretKey claveSimetrica) {
         this.correoCifrado = correoCifrado;
         this.nickCifrado = nickCifrado;
         this.nombreCifrado = nombreCifrado;
         this.apellidoCifrado = apellidoCifrado;
         this.fotoCifrada = fotoCifrada;
         this.claveResumida = claveResumida;
+        this.rolCifrado = rolCifrado;
         this.claveSimetrica = claveSimetrica;
     }
 
-    public Mensaje(byte[] correoCifrado, byte[] claveCifrada) {
+    public RegistrarUsuario(byte[] idCifrado) {
+        this.idCifrado = idCifrado;
+    }
+    
+    
+
+    public RegistrarUsuario(byte[] correoCifrado, byte[] claveCifrada) {
         this.correoCifrado = correoCifrado;
         this.nickCifrado = claveCifrada;
     }
 
-    public Mensaje() {
+    public RegistrarUsuario() {
 
     }
 
@@ -54,6 +62,16 @@ public class Mensaje implements Serializable {
         return claveResumida;
     }
 
+    public byte[] getIdCifrado() {
+        return idCifrado;
+    }
+
+    public void setIdCifrado(byte[] idCifrado) {
+        this.idCifrado = idCifrado;
+    }
+
+    
+    
     public void setClaveResumida(byte[] claveResumida) {
         this.claveResumida = claveResumida;
     }
@@ -105,6 +123,15 @@ public class Mensaje implements Serializable {
     public void setFotoCifrada(byte[] fotoCifrada) {
         this.fotoCifrada = fotoCifrada;
     }
+
+    public byte[] getRolCifrado() {
+        return rolCifrado;
+    }
+
+    public void setRolCifrado(byte[] rolCifrado) {
+        this.rolCifrado = rolCifrado;
+    }
+    
     
     
 
